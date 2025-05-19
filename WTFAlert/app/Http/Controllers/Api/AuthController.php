@@ -65,7 +65,6 @@ class AuthController extends Controller
             'mail' => 'required|email',
             'motdepasse' => 'required|string',
         ]);
-
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }

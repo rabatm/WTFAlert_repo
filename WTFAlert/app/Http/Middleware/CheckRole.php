@@ -12,7 +12,7 @@ class CheckRole
         if (!$request->user()) {
             return response()->json(['error' => 'Non authentifié'], 401);
         }
-
+        printf("dans le middleware");
         $userRoles = json_decode($request->user()->inscriptions) ?? [];
         
         foreach ($roles as $role) {

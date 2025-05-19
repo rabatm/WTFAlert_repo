@@ -13,11 +13,6 @@ use App\Notifications\NouvelleAlerte;
 
 class AlerteController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     public function index(Request $request)
     {
         $query = Alerte::with(['photos', 'habitant:id,nom_hb,prenom_hb']);
@@ -39,6 +34,7 @@ class AlerteController extends Controller
 
     public function store(Request $request)
     {
+        \Log::debug('Files received:', $request->allFiles());
         $validator = Validator::make($request->all(), [
             'type' => 'required|in:info,warning,alert',
             'titre' => 'required|string|max:255',
@@ -47,8 +43,7 @@ class AlerteController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'anonyme' => 'nullable|boolean',
-            'photos' => 'nullable|array',
-            'photos.*' => 'image|mimes:jpeg,png,jpg|max:5120', // 5MB max
+            'photos.*' => 'nullable|file|mimes:jpeg,png,jpg|max:50480',
         ]);
 
         if ($validator->fails()) {
@@ -170,10 +165,21 @@ class AlerteController extends Controller
         );
     }
 
-    private function notifierAdministrateurs(Alerte $alerte)
+private function notifierAdministrateurs(Alerte $alerte)
     {
-        // Logique pour notifier les administrateurs
-        // Exemple: envoyer un email aux administrateurs
-        // Vous pouvez implémenter cette logique selon vos besoins
+        // List of admin emails
+        $adminEmails = ["martin.rabat@gmail.com"];
+        \Mail::raw('Test message', function($message) {
+            $message->to('martin.rabat@gmail.com')
+                ->subject('Test Email');
+        });
+        // Send notification using the Notification facade with route method
+        try {
+            \Illuminate\Support\Facades\Notification::route('mail', $adminEmails)
+                ->notify(new \App\Notifications\NouvelleAlerte($alerte));
+            \Log::info('Notification attempted');
+        } catch (\Exception $e) {
+            \Log::error('Mail error: ' . $e->getMessage());
+        }
     }
 }

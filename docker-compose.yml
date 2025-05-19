@@ -19,6 +19,7 @@ services:
       context: ./docker/php
       dockerfile: Dockerfile
     container_name: wtfalert-app
+    command: php artisan queue:work
     volumes:
       - ./WTFAlert:/var/www/html
     depends_on:
@@ -30,6 +31,10 @@ services:
       - DB_DATABASE=${DB_DATABASE}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=maildev
+      - MAIL_PORT=1025
+      - MAIL_ENCRYPTION=null
     networks:
       - wtfalert-network
 
@@ -46,6 +51,15 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5435:5432"
+    networks:
+      - wtfalert-network
+
+  maildev:
+    image: maildev/maildev
+    container_name: wtfalert-maildev
+    ports:
+      - "1080:1080"  # Web interface
+      - "1025:1025"  # SMTP port
     networks:
       - wtfalert-network
 

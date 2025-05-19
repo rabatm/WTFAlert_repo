@@ -1,0 +1,57 @@
+services:
+  # Service Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: wtfalert-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./WTFAlert:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - wtfalert-network
+
+  # Service Laravel (PHP-FPM)
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: wtfalert-app
+    volumes:
+      - ./WTFAlert:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    networks:
+      - wtfalert-network
+
+  # Service PostgreSQL
+  db:
+    image: postgres:14-alpine
+    container_name: wtfalert-db
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5435:5432"
+    networks:
+      - wtfalert-network
+
+volumes:
+  postgres_data:
+
+networks:
+  wtfalert-network:
+    driver: bridge

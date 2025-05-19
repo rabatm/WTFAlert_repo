@@ -14,11 +14,6 @@ use Illuminate\Auth\Events\PasswordReset;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'forgotPassword', 'resetPassword']]);
-    }
-
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -75,16 +70,32 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $credentials = [
-            'mail' => $request->mail,
-            'password' => $request->motdepasse,
-        ];
+        $habitant = Habitant::where('mail', $request->mail)->first();
 
-        if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Email ou mot de passe incorrect'], 401);
+        if (! $habitant || ! Hash::check($request->motdepasse, $habitant->motdepasse)) {
+            return response()->json([
+                'error' => 'Email ou mot de passe incorrect'
+            ], 401);
         }
 
-        return $this->respondWithToken($token);
+        // Supprimez tous les tokens existants si nécessaire
+        // $habitant->tokens()->delete();
+
+        $token = $habitant->createToken('auth_token')->plainTextToken;
+        
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $habitant
+        ]);
+    }
+
+    // Remplacez la méthode logout
+    public function logout()
+    {
+        auth()->user()->tokens()->delete();
+
+        return response()->json(['message' => 'Déconnexion réussie']);
     }
 
     public function me()
@@ -94,14 +105,6 @@ class AuthController extends Controller
         
         return response()->json($user);
     }
-
-    public function logout()
-    {
-        auth()->logout();
-
-        return response()->json(['message' => 'Déconnexion réussie']);
-    }
-
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());

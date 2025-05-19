@@ -41,7 +41,7 @@ return [
             'provider' => 'habitants',
         ],
         'api' => [
-            'driver' => 'jwt',
+            'driver' => 'sanctum',
             'provider' => 'habitants',
         ],
     ],

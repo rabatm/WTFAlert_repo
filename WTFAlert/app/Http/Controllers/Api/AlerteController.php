@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use App\Notifications\NouvelleAlerte;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NouvelleAlerteMail;
 
 class AlerteController extends Controller
 {
@@ -32,24 +33,30 @@ class AlerteController extends Controller
         return response()->json($alertes);
     }
 
-    public function store(Request $request)
-    {
-        \Log::debug('Files received:', $request->allFiles());
-        $validator = Validator::make($request->all(), [
-            'type' => 'required|in:info,warning,alert',
-            'titre' => 'required|string|max:255',
-            'description' => 'required|string',
-            'localisation' => 'nullable|string',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'anonyme' => 'nullable|boolean',
-            'photos.*' => 'nullable|file|mimes:jpeg,png,jpg|max:50480',
-        ]);
+public function store(Request $request)
+{
+    \Log::debug('Files received:', $request->allFiles());
+    
+    // Valider les données
+    $validator = Validator::make($request->all(), [
+        'type' => 'required|in:info,danger,alert,accident',
+        'titre' => 'required|string|max:255',
+        'description' => 'required|string',
+        'localisation' => 'nullable|string',
+        'latitude' => 'nullable|numeric',
+        'longitude' => 'nullable|numeric',
+        'anonyme' => 'nullable|boolean',
+        'photos.*' => 'nullable|file|mimes:jpeg,png,jpg|max:50480',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+    }
 
+    // Utiliser une transaction pour assurer la cohérence
+    \DB::beginTransaction();
+    
+    try {
         $alerte = Alerte::create([
             'habitant_id' => auth()->id(),
             'type' => $request->type,
@@ -61,30 +68,72 @@ class AlerteController extends Controller
             'anonyme' => $request->anonyme ?? false,
         ]);
 
-        // Traitement des photos
+        // Traitement des photos - FIXED: Handle both single file and array of files
+        $savedPhotos = [];
+        
         if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
+            // Get the files - handle both single file and array
+            $photoFiles = $request->file('photos');
+            
+            // If it's a single file, convert to array
+            if (!is_array($photoFiles)) {
+                $photoFiles = [$photoFiles];
+            }
+            
+            \Log::info('Nombre de photos à traiter: ' . count($photoFiles));
+            
+            foreach ($photoFiles as $index => $photo) {
                 $nomFichier = Str::uuid() . '.' . $photo->getClientOriginalExtension();
+                \Log::info("Traitement photo {$index}: {$nomFichier}");
+                
+                // Stocker le fichier
                 $chemin = $photo->storeAs('alertes/' . $alerte->id, $nomFichier, 'private');
                 
-                Photo::create([
+                // Créer l'entrée en base
+                $photoEntry = Photo::create([
                     'alerte_id' => $alerte->id,
                     'chemin' => $chemin,
                     'nom_original' => $photo->getClientOriginalName(),
                     'mime_type' => $photo->getMimeType(),
                     'taille' => $photo->getSize(),
                 ]);
+                
+                // Garder une trace des photos enregistrées
+                $savedPhotos[] = $photoEntry;
+                \Log::info("Photo {$index} enregistrée avec ID: {$photoEntry->id}");
             }
         }
 
         // Notification aux administrateurs
+        $alerte->load('photos', 'habitant'); // Charger les photos et l'habitant avant l'envoi
+        \Log::info('Sending notification for alert #' . $alerte->id . ' with ' . count($alerte->photos) . ' photos');
         $this->notifierAdministrateurs($alerte);
-
+        
+        // Si tout s'est bien passé, valider la transaction
+        \DB::commit();
+        
+        // Reload the alert with photos to return the complete data
+        $alerte->load('photos');
+        
         return response()->json([
             'message' => 'Alerte créée avec succès',
-            'alerte' => $alerte->load('photos')
+            'alerte' => $alerte,
+            'photos_count' => count($savedPhotos)
         ], 201);
+        
+    } catch (\Exception $e) {
+        // En cas d'erreur, annuler la transaction
+        \DB::rollBack();
+        
+        // Supprimer tous les fichiers qui ont été stockés
+        if (isset($alerte) && $alerte->id) {
+            Storage::disk('private')->deleteDirectory('alertes/' . $alerte->id);
+        }
+        
+        \Log::error('Erreur lors de la création de l\'alerte: ' . $e->getMessage());
+        return response()->json(['error' => 'Une erreur est survenue lors de la création de l\'alerte'], 500);
     }
+}
 
     public function show($id)
     {
@@ -165,21 +214,24 @@ class AlerteController extends Controller
         );
     }
 
-private function notifierAdministrateurs(Alerte $alerte)
+   
+    private function notifierAdministrateurs(Alerte $alerte)
     {
-        // List of admin emails
-        $adminEmails = ["martin.rabat@gmail.com"];
-        \Mail::raw('Test message', function($message) {
-            $message->to('martin.rabat@gmail.com')
-                ->subject('Test Email');
-        });
-        // Send notification using the Notification facade with route method
         try {
-            \Illuminate\Support\Facades\Notification::route('mail', $adminEmails)
-                ->notify(new \App\Notifications\NouvelleAlerte($alerte));
-            \Log::info('Notification attempted');
+            // Get admin emails from your configuration
+            $adminEmails = ["martin.rabat@gmail.com","nicolas.cudel@gmail.com","patrick.gericault@gmail.com"];
+            
+            // Send emails synchronously (without queue)
+            foreach ($adminEmails as $email) {
+                Mail::to($email)->send(new NouvelleAlerteMail($alerte));
+            }
+                
+            \Log::info('Admin notification sent successfully for alert #' . $alerte->id);
+            
         } catch (\Exception $e) {
-            \Log::error('Mail error: ' . $e->getMessage());
+            // Log the error but don't let it break the alert creation
+            \Log::error('Failed to send admin notification: ' . $e->getMessage());
+            // Don't rethrow the exception so alert creation can still succeed
         }
     }
 }

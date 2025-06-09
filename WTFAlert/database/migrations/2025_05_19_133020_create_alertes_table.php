@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('alertes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('habitant_id')->constrained();
-            $table->enum('type', ['info', 'warning', 'alert']);
             $table->string('titre');
             $table->text('description');
             $table->string('localisation')->nullable();

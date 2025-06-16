@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('telephone_fixe')->nullable();
             $table->text('info')->nullable();
             $table->string('animaux')->nullable();
-            $table->string('lattitude')->nullable();
+            $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->string('geoloc_sdis')->nullable();
             $table->string('internet')->nullable();

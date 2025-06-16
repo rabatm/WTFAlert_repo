@@ -25,7 +25,7 @@ class Habitant extends Model
 
     public function foyers()
     {
-        return $this->belongsToMany(Foyer::class, 'habitant_foyer')
+        return $this->belongsToMany(Foyer::class, 'habitants_foyer')
                     ->withPivot('type_habitant')
                     ->withTimestamps();
     }

@@ -19,9 +19,9 @@ class Secteur extends Model
     /**
      * Les mairies associées à ce secteur
      */
-    public function mairie(): BelongsToMany
+    public function mairies(): BelongsToMany
     {
-        return $this->belongsToMany(Mairies::class, 'secteur_mairie');
+        return $this->belongsToMany(Mairie::class, 'secteurs_mairie');
     }
 
     /**

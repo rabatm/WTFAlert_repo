@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Mairies extends Model
+class Mairie extends Model
 {
     use HasFactory;
 
@@ -60,6 +61,6 @@ class Mairies extends Model
 
     public function secteurs(): BelongsToMany
     {
-        return $this->belongsToMany(Secteur::class, 'secteur_mairie');
+        return $this->belongsToMany(Secteur::class, 'secteurs_mairie');
     }
 }

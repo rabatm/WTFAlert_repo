@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Habitant;
+use App\Models\User;
 use App\Models\Foyer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -17,16 +18,17 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nom_hb' => 'required|string|max:255',
-            'prenom_hb' => 'required|string|max:255',
-            'mail' => 'required|string|email|max:255|unique:habitants',
-            'motdepasse' => 'required|string|min:8',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
             'telephone_mobile' => 'nullable|string',
             'foyer' => 'required|array',
             'foyer.nom' => 'required|string',
             'foyer.adresse' => 'required|string',
             'foyer.code_postal' => 'required|numeric',
             'foyer.ville' => 'required|string',
+            // Ajoute ici les champs spécifiques à Habitant si besoin
         ]);
 
         if ($validator->fails()) {
@@ -43,19 +45,26 @@ class AuthController extends Controller
             'complement_dadresse' => $request->foyer['complement_dadresse'] ?? null,
         ]);
 
-        // Créer l'habitant
-        $habitant = Habitant::create([
+        // Créer le User
+        $user = User::create([
             'foyer_id' => $foyer->id,
-            'nom_hb' => $request->nom_hb,
-            'prenom_hb' => $request->prenom_hb,
-            'mail' => $request->mail,
-            'motdepasse' => Hash::make($request->motdepasse),
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
             'telephone_mobile' => $request->telephone_mobile,
+        ]);
+
+        // Créer le Habitant lié à ce User
+        $habitant = Habitant::create([
+            'user_id' => $user->id,
+            'inscriptions' => [], // ou $request->inscriptions si tu veux le passer
         ]);
 
         return response()->json([
             'message' => 'Utilisateur enregistré avec succès',
-            'user' => $habitant
+            'user' => $user,
+            'habitant' => $habitant,
         ], 201);
     }
 
@@ -69,23 +78,27 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $habitant = Habitant::where('mail', $request->mail)->first();
+        $user = User::where('email', $request->mail)->first();
 
-        if (! $habitant || ! Hash::check($request->motdepasse, $habitant->motdepasse)) {
+        if (! $user || ! Hash::check($request->motdepasse, $user->password)) {
             return response()->json([
                 'error' => 'Email ou mot de passe incorrect'
             ], 401);
         }
 
-        // Supprimez tous les tokens existants si nécessaire
-        // $habitant->tokens()->delete();
+        // Optionnel : supprimer les anciens tokens
+        $user->tokens()->delete();
 
-        $token = $habitant->createToken('auth_token')->plainTextToken;
-        
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // On ne retourne que les infos utiles de l'utilisateur
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $habitant
+            'user' => $user,
+            'foyer' => $user->habitant->foyers()->first(), // Inclure le foyer de
+            'habitant' => $user->habitant, // Inclure le habitant lié
+
         ]);
     }
 
@@ -101,7 +114,7 @@ class AuthController extends Controller
     {
         $user = auth()->user();
         $user->load('foyer');
-        
+
         return response()->json($user);
     }
     public function refresh()

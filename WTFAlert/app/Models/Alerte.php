@@ -46,7 +46,7 @@ class Alerte extends Model
 
     public function habitant()
     {
-        return $this->belongsTo(Habitant::class);
+        return $this->belongsTo(User::class, 'habitant_id');
     }
 
     public function admin()

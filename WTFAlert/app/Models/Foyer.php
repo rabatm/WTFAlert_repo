@@ -21,7 +21,7 @@ class Foyer extends Model
         'telephone_fixe',
         'info',
         'animaux',
-        'lattitude',
+        'latitude',
         'longitude',
         'geoloc_sdis',
         'internet',
@@ -36,14 +36,14 @@ class Foyer extends Model
         'vulnerable' => 'boolean',
     ];
 
-    public function mairies()
+    public function mairie()
     {
-        return $this->belongsTo(Mairies::class);
+        return $this->belongsTo(Mairie::class);
     }
 
     public function habitants()
     {
-        return $this->belongsToMany(Habitant::class, 'habitant_foyer')
+        return $this->belongsToMany(Habitant::class, 'habitants_foyer')
                     ->withPivot('type_habitant')
                     ->withTimestamps();
     }
@@ -62,6 +62,6 @@ class Foyer extends Model
 
     public function secteurs(): BelongsToMany
     {
-        return $this->belongsToMany(Secteur::class, 'foyer_secteur');
+        return $this->belongsToMany(Secteur::class, 'foyers_secteurs');
     }
 }

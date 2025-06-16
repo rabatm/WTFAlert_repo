@@ -16,7 +16,7 @@ class AlerteController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Alerte::with(['photos', 'habitant:id,nom_hb,prenom_hb']);
+        $query = Alerte::with(['photos', 'habitant:id,nom,prenom']);
 
         // Filtrage par type
         if ($request->has('type')) {
@@ -34,7 +34,7 @@ class AlerteController extends Controller
     }
     public function mobileAlertes(Request $request)
     {
-        $query = Alerte::with(['photos', 'habitant:id,nom_hb,prenom_hb'])
+        $query = Alerte::with(['photos', 'habitant:id,nom,prenom'])
             ->visibleMobile()
             ->where('statut', Alerte::STATUT_VALIDE);
 
@@ -54,7 +54,7 @@ class AlerteController extends Controller
 public function store(Request $request)
 {
     \Log::debug('Files received:', $request->allFiles());
-    
+
     // Valider les données
     $validator = Validator::make($request->all(), [
         'type' => 'required|in:info,danger,alert,accident',
@@ -73,7 +73,7 @@ public function store(Request $request)
 
     // Utiliser une transaction pour assurer la cohérence
     \DB::beginTransaction();
-    
+
     try {
         $alerte = Alerte::create([
             'habitant_id' => auth()->id(),
@@ -88,25 +88,25 @@ public function store(Request $request)
 
         // Traitement des photos - FIXED: Handle both single file and array of files
         $savedPhotos = [];
-        
+
         if ($request->hasFile('photos')) {
             // Get the files - handle both single file and array
             $photoFiles = $request->file('photos');
-            
+
             // If it's a single file, convert to array
             if (!is_array($photoFiles)) {
                 $photoFiles = [$photoFiles];
             }
-            
+
             \Log::info('Nombre de photos à traiter: ' . count($photoFiles));
-            
+
             foreach ($photoFiles as $index => $photo) {
                 $nomFichier = Str::uuid() . '.' . $photo->getClientOriginalExtension();
                 \Log::info("Traitement photo {$index}: {$nomFichier}");
-                
+
                 // Stocker le fichier
                 $chemin = $photo->storeAs('alertes/' . $alerte->id, $nomFichier, 'private');
-                
+
                 // Créer l'entrée en base
                 $photoEntry = Photo::create([
                     'alerte_id' => $alerte->id,
@@ -115,7 +115,7 @@ public function store(Request $request)
                     'mime_type' => $photo->getMimeType(),
                     'taille' => $photo->getSize(),
                 ]);
-                
+
                 // Garder une trace des photos enregistrées
                 $savedPhotos[] = $photoEntry;
                 \Log::info("Photo {$index} enregistrée avec ID: {$photoEntry->id}");
@@ -126,28 +126,28 @@ public function store(Request $request)
         $alerte->load('photos', 'habitant'); // Charger les photos et l'habitant avant l'envoi
         \Log::info('Sending notification for alert #' . $alerte->id . ' with ' . count($alerte->photos) . ' photos');
         $this->notifierAdministrateurs($alerte);
-        
+
         // Si tout s'est bien passé, valider la transaction
         \DB::commit();
-        
+
         // Reload the alert with photos to return the complete data
         $alerte->load('photos');
-        
+
         return response()->json([
             'message' => 'Alerte créée avec succès',
             'alerte' => $alerte,
             'photos_count' => count($savedPhotos)
         ], 201);
-        
+
     } catch (\Exception $e) {
         // En cas d'erreur, annuler la transaction
         \DB::rollBack();
-        
+
         // Supprimer tous les fichiers qui ont été stockés
         if (isset($alerte) && $alerte->id) {
             Storage::disk('private')->deleteDirectory('alertes/' . $alerte->id);
         }
-        
+
         \Log::error('Erreur lors de la création de l\'alerte: ' . $e->getMessage());
         return response()->json(['error' => 'Une erreur est survenue lors de la création de l\'alerte'], 500);
     }
@@ -155,15 +155,15 @@ public function store(Request $request)
 
     public function show($id)
     {
-        $alerte = Alerte::with(['photos', 'habitant:id,nom_hb,prenom_hb'])->findOrFail($id);
-        
+        $alerte = Alerte::with(['photos', 'habitant:id,nom,prenom'])->findOrFail($id);
+
         return response()->json($alerte);
     }
 
     public function update(Request $request, $id)
     {
         $alerte = Alerte::findOrFail($id);
-        
+
         // Vérifier si l'utilisateur est autorisé à modifier cette alerte
         if (auth()->id() !== $alerte->habitant_id) {
             return response()->json(['error' => 'Non autorisé'], 403);
@@ -195,7 +195,7 @@ public function store(Request $request)
     public function destroy($id)
     {
         $alerte = Alerte::findOrFail($id);
-        
+
         // Vérifier si l'utilisateur est autorisé à supprimer cette alerte
         if (auth()->id() !== $alerte->habitant_id) {
             return response()->json(['error' => 'Non autorisé'], 403);
@@ -214,10 +214,10 @@ public function store(Request $request)
     public function getPhoto($id)
     {
         $photo = Photo::findOrFail($id);
-        
+
         // Vérifier l'autorisation
         $alerte = $photo->alerte;
-        
+
         if (!$alerte || (auth()->id() !== $alerte->habitant_id && !auth()->user()->isAdmin())) {
             return response()->json(['error' => 'Non autorisé'], 403);
         }
@@ -232,20 +232,20 @@ public function store(Request $request)
         );
     }
 
-   
+
     private function notifierAdministrateurs(Alerte $alerte)
     {
         try {
             // Get admin emails from your configuration
             $adminEmails = ["martin.rabat@gmail.com","nicolas.cudel@gmail.com","patrick.gericault@gmail.com"];
-            
+
             // Send emails synchronously (without queue)
             foreach ($adminEmails as $email) {
                 Mail::to($email)->send(new NouvelleAlerteMail($alerte));
             }
-                
+
             \Log::info('Admin notification sent successfully for alert #' . $alerte->id);
-            
+
         } catch (\Exception $e) {
             // Log the error but don't let it break the alert creation
             \Log::error('Failed to send admin notification: ' . $e->getMessage());

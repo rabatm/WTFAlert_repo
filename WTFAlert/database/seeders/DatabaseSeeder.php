@@ -35,12 +35,14 @@ class DatabaseSeeder extends Seeder
         // Create mairies
         $mairie = Mairie::create([
             'nom' => 'Mairie de Villeneuve',
-            'adresse' => '1 Place de la Mairie',
-            'code_postal' => '34000',
-            'ville' => 'Villeneuve',
-            'telephone' => '0467000000',
-            'email' => 'contact@mairie-villeneuve.fr',
-            'telephone' => '0467000001',
+            'addressDeLaMairie' => '1 Place de la Mairie',
+            'postal_codeDeLaMairie' => '34000',
+            'cityDeLaMairie' => 'Villeneuve',
+            'phoneDeLaMairie' => '0467000000',
+            'emailsDeLaMairie' => 'contact@mairie-villeneuve.fr',
+            'phone' => '0467000001',
+            'email' => 'info@mairie-villeneuve.fr',
+            'website' => 'www.mairie-villeneuve.fr',
         ]);
 
         // Associate mairie with sectors
@@ -71,7 +73,7 @@ class DatabaseSeeder extends Seeder
         foreach ($adminUsers as $user) {
             $user->mairie()->attach($mairie->id, [
                 'user_type' => 'administrateur',
-                'contact_type' => 'principal',
+                'contact_type' => 'toutes',
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -92,7 +94,7 @@ class DatabaseSeeder extends Seeder
                 'telephone_fixe' => fake()->boolean(60) ? fake()->phoneNumber() : null,
                 'info' => fake()->boolean(40) ? fake()->text(100) : null,
                 'animaux' => fake()->boolean(50) ? fake()->randomElement(['chien', 'chat', 'chien et chat', 'autres']) : null,
-                'lattitude' => fake()->latitude(),
+                'latitude' => fake()->latitude(),
                 'longitude' => fake()->longitude(),
                 'geoloc_sdis' => fake()->boolean(20) ? fake()->regexify('[A-Z]{2}[0-9]{4}') : null,
                 'internet' => fake()->boolean(80) ? fake()->randomElement(['fibre', 'adsl', 'satellite']) : null,
@@ -116,7 +118,7 @@ class DatabaseSeeder extends Seeder
         foreach ($adminUsers as $index => $user) {
             $habitant = Habitant::create([
                 'user_id' => $user->id,
-                'inscriptions' => ['admin'],
+                'inscriptions' => ['toutes'],
             ]);
 
             $adminHabitants[] = $habitant;
@@ -131,6 +133,7 @@ class DatabaseSeeder extends Seeder
 
         // Create regular users and habitants
         $roles = ['moderateur', 'alerte', 'standard'];
+        $inscriptions = ['alerte', 'standard'];
 
         for ($i = 2; $i < count($foyers); $i++) {
             // Generate 1-4 habitants per foyer
@@ -142,7 +145,7 @@ class DatabaseSeeder extends Seeder
                     'nom' => fake()->lastName(),
                     'prenom' => fake()->firstName(),
                     'email' => fake()->unique()->safeEmail(),
-                    'password' => Hash::make('password123'),
+                    'password' => Hash::make('Password123!'),
                     'telephone_mobile' => fake()->boolean(90) ? fake()->phoneNumber() : null,
                 ]);
 
@@ -167,7 +170,7 @@ class DatabaseSeeder extends Seeder
 
                 // Create some alerts for habitants with 'alerte' role
                 if (in_array('alerte', $inscriptions) && fake()->boolean(30)) {
-                    $alerteTypes = ['danger', 'information', 'travaux', 'événement'];
+                    $alerteTypes = ['danger', 'accident', 'info'];
                     $alerteStatuts = [
                         Alerte::STATUT_EN_ATTENTE,
                         Alerte::STATUT_VALIDE,

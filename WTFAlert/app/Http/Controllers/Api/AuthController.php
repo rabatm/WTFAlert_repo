@@ -113,10 +113,19 @@ class AuthController extends Controller
     public function me()
     {
         $user = auth()->user();
-        $user->load('foyer');
-
-        return response()->json($user);
+        if (!$user) {
+            return response()->json(['error' => 'Non autorisé'], 401);
+        }
+        return response()->json([
+            'user' => $user,
+            'foyer' => $user->habitant->foyers()->first(),
+        ]);
     }
+    /**
+     * Refresh the token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());

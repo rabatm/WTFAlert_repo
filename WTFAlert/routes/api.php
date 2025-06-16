@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FoyerController;
 use App\Http\Controllers\Api\AlerteController;
 
 // Routes publiques
@@ -17,9 +18,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
-    
+
     // Alertes
     Route::apiResource('alertes', AlerteController::class);
     Route::get('photos/{id}', [AlerteController::class, 'getPhoto']);
     Route::get('/alertes/mobile', [AlerteController::class, 'mobileAlertes']);
+    // Route pour récupérer le foyer de l'utilisateur connecté
+    Route::get('/foyer/{id}/is-responsable', [FoyerController::class, 'isResponsable']);
+    Route::get('/foyer/{id}/habitants', [FoyerController::class, 'habitants']);
+    Route::get('/foyer/{id}/secteur', [FoyerController::class, 'secteur']);
+    Route::get('/mes-foyers', [FoyerController::class, 'mesFoyers']);
 });

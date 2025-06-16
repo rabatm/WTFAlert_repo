@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // Alertes
     Route::apiResource('alertes', AlerteController::class);
     Route::get('photos/{id}', [AlerteController::class, 'getPhoto']);
+    Route::get('/alertes/mobile', [AlerteController::class, 'mobileAlertes']);
 });

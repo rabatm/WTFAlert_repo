@@ -3,56 +3,46 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; 
+use Illuminate\Database\Eloquent\Model;
 
-class Habitant extends Authenticatable
+class Habitant extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable; 
+    use HasFactory;
 
     protected $fillable = [
-        'foyer_id',
-        'nom_hb',
-        'prenom_hb',
-        'telephone_mobile',
-        'mail',
+        'user_id',
         'inscriptions',
-        'motdepasse',
-    ];
-
-    protected $hidden = [
-        'motdepasse',
-        'remember_token',
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'inscriptions' => 'array',
     ];
 
-    public function getAuthPassword()
+    public function user()
     {
-        return $this->motdepasse;
+        return $this->belongsTo(User::class);
     }
 
-    public function getJWTIdentifier()
+    public function foyers()
     {
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
-
-    public function foyer()
-    {
-        return $this->belongsTo(Foyer::class);
+        return $this->belongsToMany(Foyer::class, 'habitant_foyer')
+                    ->withPivot('type_habitant')
+                    ->withTimestamps();
     }
 
     public function alertes()
     {
         return $this->hasMany(Alerte::class);
+    }
+
+    // Méthodes helper pour récupérer les foyers par type
+    public function foyersResponsable()
+    {
+        return $this->foyers()->wherePivot('type_habitant', 'responsable');
+    }
+
+    public function foyersSimple()
+    {
+        return $this->foyers()->wherePivot('type_habitant', 'habitant');
     }
 }

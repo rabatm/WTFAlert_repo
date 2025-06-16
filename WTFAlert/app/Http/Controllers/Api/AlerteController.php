@@ -32,6 +32,24 @@ class AlerteController extends Controller
 
         return response()->json($alertes);
     }
+    public function mobileAlertes(Request $request)
+    {
+        $query = Alerte::with(['photos', 'habitant:id,nom_hb,prenom_hb'])
+            ->visibleMobile()
+            ->where('statut', Alerte::STATUT_VALIDE);
+
+        // Filtrage par type
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Exclure les alertes archivées
+        $query->nonArchivees();
+
+        $alertes = $query->latest()->paginate(15);
+
+        return response()->json($alertes);
+    }
 
 public function store(Request $request)
 {

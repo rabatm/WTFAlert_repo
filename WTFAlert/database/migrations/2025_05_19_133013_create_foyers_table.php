@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('numero_voie')->nullable();
             $table->string('adresse');
             $table->string('complement_dadresse')->nullable();
-            $table->json('secteur')->nullable();
             $table->integer('code_postal');
             $table->string('ville');
             $table->string('telephone_fixe')->nullable();

@@ -19,15 +19,15 @@ services:
       context: ./docker/php
       dockerfile: Dockerfile
     container_name: wtfalert-app
-    command: php artisan queue:work
+    command: php-fpm
     volumes:
       - ./WTFAlert:/var/www/html
     depends_on:
       - db
     environment:
-      - DB_CONNECTION=pgsql
+      - DB_CONNECTION=mysql
       - DB_HOST=db
-      - DB_PORT=5432
+      - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
@@ -40,19 +40,20 @@ services:
 
   # Service PostgreSQL
   db:
-    image: postgres:14-alpine
-    container_name: wtfalert-db
-    restart: always
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=${DB_DATABASE}
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    ports:
-      - "5435:5432"
-    networks:
-      - wtfalert-network
+      image: mysql:8
+      container_name: wtfalert-db
+      restart: always
+      volumes:
+        - mysql_data:/var/lib/mysql
+      environment:
+        - MYSQL_DATABASE=${DB_DATABASE}
+        - MYSQL_USER=${DB_USERNAME}
+        - MYSQL_PASSWORD=${DB_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      ports:
+        - "3306:3306"
+      networks:
+        - wtfalert-network
 
   maildev:
     image: maildev/maildev
@@ -64,7 +65,7 @@ services:
       - wtfalert-network
 
 volumes:
-  postgres_data:
+  mysql_data:
 
 networks:
   wtfalert-network:

@@ -4,17 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Foyer extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'mairie_id',
         'nom',
         'numero_voie',
         'adresse',
         'complement_dadresse',
-        'secteur',
         'code_postal',
         'ville',
         'telephone_fixe',
@@ -31,13 +32,36 @@ class Foyer extends Model
     ];
 
     protected $casts = [
-        'secteur' => 'array',
         'non_connecte' => 'boolean',
         'vulnerable' => 'boolean',
     ];
 
+    public function mairies()
+    {
+        return $this->belongsTo(Mairies::class);
+    }
+
     public function habitants()
     {
-        return $this->hasMany(Habitant::class);
+        return $this->belongsToMany(Habitant::class, 'habitant_foyer')
+                    ->withPivot('type_habitant')
+                    ->withTimestamps();
+    }
+
+    // Méthode helper pour récupérer le responsable du foyer
+    public function responsable()
+    {
+        return $this->habitants()->wherePivot('type_habitant', 'responsable')->first();
+    }
+
+    // Méthode helper pour récupérer tous les habitants simples
+    public function habitantsSimples()
+    {
+        return $this->habitants()->wherePivot('type_habitant', 'habitant');
+    }
+
+    public function secteurs(): BelongsToMany
+    {
+        return $this->belongsToMany(Secteur::class, 'foyer_secteur');
     }
 }

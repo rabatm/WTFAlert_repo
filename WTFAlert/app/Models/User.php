@@ -17,6 +17,7 @@ class User extends Authenticatable
         'email',
         'password',
         'telephone_mobile',
+        'is_admin',
     ];
 
     protected $hidden = [
@@ -42,5 +43,15 @@ class User extends Authenticatable
         return $this->belongsToMany(Mairie::class)
                     ->withPivot('user_type', 'contact_type')
                     ->withTimestamps();
+    }
+    
+    /**
+     * Vérifie si l'utilisateur est un administrateur
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->is_admin === true;
     }
 }

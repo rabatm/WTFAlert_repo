@@ -28,4 +28,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/foyer/{id}/habitants', [FoyerController::class, 'habitants']);
     Route::get('/foyer/{id}/secteur', [FoyerController::class, 'secteur']);
     Route::get('/mes-foyers', [FoyerController::class, 'mesFoyers']);
+
+    // Routes pour les demandes de modification
+    Route::post('/demandes-modification', [\App\Http\Controllers\Api\DemandeModificationController::class, 'store']);
+    Route::get('/mes-demandes-modification', [\App\Http\Controllers\Api\DemandeModificationController::class, 'mesDemandes']);
+});
+
+// Routes pour les administrateurs
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    // Routes pour gérer les demandes de modification (à implémenter dans le contrôleur admin)
+    Route::get('/admin/demandes-modification', [\App\Http\Controllers\Api\Admin\DemandeModificationAdminController::class, 'index']);
+    Route::put('/admin/demandes-modification/{id}/traiter', [\App\Http\Controllers\Api\Admin\DemandeModificationAdminController::class, 'traiter']);
+    
+    // Routes pour l'historique des modifications des habitants
+    Route::get('/admin/habitants/{habitant}/historique', [\App\Http\Controllers\Api\HistoriqueHabitantController::class, 'index']);
+    Route::get('/admin/habitants/{habitant}/historique/{activite}', [\App\Http\Controllers\Api\HistoriqueHabitantController::class, 'show']);
 });

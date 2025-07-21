@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
-
+use App\Http\Controllers\Admin\InfoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,6 +18,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/info', [InfoController::class, 'index'])->name('info.index');
+Route::get('/info/{id}', [InfoController::class, 'show'])->name('info.show');
 /*
 |--------------------------------------------------------------------------
 | Admin Routes

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mairie extends Model
 {
@@ -59,8 +60,8 @@ class Mairie extends Model
         return $this->users()->wherePivot('user_type', 'administrateur');
     }
 
-    public function secteurs(): BelongsToMany
+    public function secteurs(): HasMany
     {
-        return $this->belongsToMany(Secteur::class, 'secteurs_mairie');
+        return $this->hasMany(Secteur::class);
     }
 }

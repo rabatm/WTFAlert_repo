@@ -15,15 +15,15 @@ class Secteur extends Model
         'nom',
         'secteur',
         'description',
-        'mairie_id',
+        'collectivite_id',
     ];
 
     /**
-     * La mairie associée à ce secteur
+     * La collectivité associée à ce secteur
      */
-    public function mairie(): BelongsTo
+    public function collectivite(): BelongsTo
     {
-        return $this->belongsTo(Mairie::class);
+        return $this->belongsTo(Collectivite::class);
     }
 
     /**

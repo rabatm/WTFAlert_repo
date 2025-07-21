@@ -56,9 +56,9 @@ class User extends Authenticatable
         return $this->hasOne(Habitant::class);
     }
 
-    public function mairie()
+    public function collectivite()
     {
-        return $this->belongsToMany(Mairie::class)
+        return $this->belongsToMany(Collectivite::class)
                     ->withPivot('user_type', 'contact_type')
                     ->withTimestamps();
     }

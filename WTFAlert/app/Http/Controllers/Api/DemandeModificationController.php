@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Mail\NouvelleDemandeModificationMail;
-use App\Models\DemandeModification;
-use App\Models\Mairie;
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\DemandeModification;
+use App\Models\Collectivite;
+use App\Mail\NouvelleDemandeModificationMail;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +16,7 @@ class DemandeModificationController extends Controller
 {
     /**
      * Envoyer une demande de modification d'information
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -55,39 +55,39 @@ class DemandeModificationController extends Controller
                 "nicolas.cudel@gmail.com",
                 "patrick.gericault@gmail.com"
             ];
-            
-            // Récupérer les administrateurs de la mairie du foyer concerné
-            $mairieAdmins = [];
-            if ($demande->foyer && $demande->foyer->mairie) {
-                $mairieAdmins = $demande->foyer->mairie->administrateurs()
+
+            // Récupérer les administrateurs de la collectivité du foyer concerné
+            $collectiviteAdmins = [];
+            if ($demande->foyer && $demande->foyer->collectivite) {
+                $collectiviteAdmins = $demande->foyer->collectivite->administrateurs()
                     ->whereNotNull('email')
                     ->pluck('email')
                     ->filter()
                     ->unique()
                     ->values()
                     ->toArray();
-                
-                Log::info('Administrateurs trouvés pour la mairie:', [
-                    'mairie_id' => $demande->foyer->mairie->id,
-                    'emails' => $mairieAdmins
+
+                Log::info('Administrateurs trouvés pour la collectivité:', [
+                    'collectivite_id' => $demande->foyer->collectivite->id,
+                    'emails' => $collectiviteAdmins
                 ]);
             }
-            
+
             // Fusionner les listes d'emails en évitant les doublons
-            $allRecipients = array_unique(array_merge($adminEmails, $mairieAdmins));
-            
+            $allRecipients = array_unique(array_merge($adminEmails, $collectiviteAdmins));
+
             // Filtrer les emails vides
             $allRecipients = array_filter($allRecipients);
-            
+
             if (!empty($allRecipients)) {
                 try {
                     // Envoyer la notification par email
                     Mail::to($allRecipients[0])
                         ->cc(array_slice($allRecipients, 1))
                         ->send(new NouvelleDemandeModificationMail($demande, $allRecipients));
-                    
+
                     Log::info('Notification email envoyée pour la demande #' . $demande->id . ' à ' . implode(', ', $allRecipients));
-                    
+
                 } catch (\Exception $e) {
                     Log::error('Erreur lors de l\'envoi des emails de notification : ' . $e->getMessage());
                     // On continue même en cas d'erreur d'envoi d'email
@@ -113,7 +113,7 @@ class DemandeModificationController extends Controller
 
     /**
      * Récupérer les demandes de l'utilisateur connecté
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function mesDemandes()

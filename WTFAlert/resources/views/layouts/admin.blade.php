@@ -25,8 +25,8 @@
                 <a href="{{ route('admin.dashboard') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
                     Tableau de bord
                 </a>
-                <a href="{{ route('admin.mairies.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
-                    Mairies
+                <a href="{{ route('admin.collectivites.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    Collectivités
                 </a>
                 <a href="{{ route('admin.foyers.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
                     Foyers

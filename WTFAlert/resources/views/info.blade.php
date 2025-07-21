@@ -37,13 +37,13 @@
             <h1>{{ $title }}</h1>
             <p>{{ $description }}</p>
             <div class="secteur-grid">
-                @foreach($mairies as $mairie)
+                @foreach($collectivites as $collectivite)
                     <div class="secteur-card">
-                        <h2>{{ $mairie['name'] }}</h2>
-                        <p><strong>Adresse:</strong> {{ $mairie['address'] }}</p>
-                        <p><strong>Téléphone:</strong> {{ $mairie['phone'] }}</p>
-                        <p><strong>Email:</strong> {{ $mairie['email'] }}</p>
-                        <p><strong>Site Web:</strong> <a href="{{ $mairie['website'] }}" target="_blank">{{ $mairie['website'] }}</a></p>
+                        <h2>{{ $collectivite['name'] }}</h2>
+                        <p><strong>Adresse:</strong> {{ $collectivite['address'] }}</p>
+                        <p><strong>Téléphone:</strong> {{ $collectivite['phone'] }}</p>
+                        <p><strong>Email:</strong> {{ $collectivite['email'] }}</p>
+                        <p><strong>Site Web:</strong> <a href="{{ $collectivite['website'] }}" target="_blank">{{ $collectivite['website'] }}</a></p>
                     </div>
                 @endforeach
             </div>

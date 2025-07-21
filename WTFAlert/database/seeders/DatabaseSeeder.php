@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Mairie;
+use App\Models\Collectivite;
 use App\Models\Secteur;
 use App\Models\Foyer;
 use App\Models\Habitant;
@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             AdminUserSeeder::class,
         ]);
-        
+
         // Puis exécuter les autres seeders si nécessaire
         if (app()->environment() !== 'production') {
             // Seeders de développement ici
@@ -42,22 +42,22 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Create mairies
-        $mairie = Mairie::create([
-            'nom' => 'Mairie de Villeneuve',
-            'addressDeLaMairie' => '1 Place de la Mairie',
-            'postal_codeDeLaMairie' => '34000',
-            'cityDeLaMairie' => 'Villeneuve',
-            'phoneDeLaMairie' => '0467000000',
-            'emailsDeLaMairie' => 'contact@mairie-villeneuve.fr',
+        // Create collectivites
+        $collectivite = Collectivite::create([
+            'nom' => 'Collectivité de Villeneuve',
+            'addressDeLaCollectivite' => '1 Place de la Mairie',
+            'postal_codeDeLaCollectivite' => '34000',
+            'cityDeLaCollectivite' => 'Villeneuve',
+            'phoneDeLaCollectivite' => '0467000000',
+            'emailsDeLaCollectivite' => 'contact@mairie-villeneuve.fr',
             'phone' => '0467000001',
             'email' => 'info@mairie-villeneuve.fr',
             'website' => 'www.mairie-villeneuve.fr',
         ]);
 
-        // Associate mairie with sectors
-        $mairie->secteurs()->attach($secteurs[0]->id);
-        $mairie->secteurs()->attach($secteurs[4]->id);
+        // Associate collectivite with sectors (mise à jour des secteurs pour leur assigner la collectivité)
+        $secteurs[0]->update(['collectivite_id' => $collectivite->id]);
+        $secteurs[4]->update(['collectivite_id' => $collectivite->id]);
 
         // Create admin users
         $adminPassword = 'Admin123!';
@@ -79,9 +79,9 @@ class DatabaseSeeder extends Seeder
             'telephone_mobile' => '0607080910',
         ]);
 
-        // Associate users with mairie
+        // Associate users with collectivite
         foreach ($adminUsers as $user) {
-            $user->mairie()->attach($mairie->id, [
+            $user->collectivite()->attach($collectivite->id, [
                 'user_type' => 'administrateur',
                 'contact_type' => 'toutes',
                 'created_at' => now(),
@@ -94,7 +94,7 @@ class DatabaseSeeder extends Seeder
 
         for ($i = 1; $i <= 10; $i++) {
             $foyer = Foyer::create([
-                'mairie_id' => $mairie->id,
+                'collectivite_id' => $collectivite->id,
                 'nom' => 'Foyer ' . fake()->lastName(),
                 'numero_voie' => fake()->numberBetween(1, 100),
                 'adresse' => fake()->streetName(),

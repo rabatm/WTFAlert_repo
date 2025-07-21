@@ -7,17 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Mairie extends Model
+class Collectivite extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'nom',
-        'addressDeLaMairie',
-        'postal_codeDeLaMairie',
-        'cityDeLaMairie',
-        'phoneDeLaMairie',
-        'emailsDeLaMairie',
+        'addressDeLaCollectivite',
+        'postal_codeDeLaCollectivite',
+        'cityDeLaCollectivite',
+        'phoneDeLaCollectivite',
+        'emailsDeLaCollectivite',
         'phone',
         'email',
         'website',
@@ -25,14 +25,14 @@ class Mairie extends Model
 
     public function getFullAddressAttribute()
     {
-        return "{$this->addressDeLaMairie}, {$this->postal_codeDeLaMairie} {$this->cityDeLaMairie}";
+        return "{$this->addressDeLaCollectivite}, {$this->postal_codeDeLaCollectivite} {$this->cityDeLaCollectivite}";
     }
 
     public function getContactInfoAttribute()
     {
         return [
-            'phone' => $this->phoneDeLaMairie,
-            'email' => $this->emailsDeLaMairie,
+            'phone' => $this->phoneDeLaCollectivite,
+            'email' => $this->emailsDeLaCollectivite,
             'website' => $this->website,
         ];
     }
@@ -50,9 +50,9 @@ class Mairie extends Model
     }
 
     // Méthodes helper pour récupérer les utilisateurs par type
-    public function maires()
+    public function collectivites()
     {
-        return $this->users()->wherePivot('user_type', 'maire');
+        return $this->users()->wherePivot('user_type', 'collectivite');
     }
 
     public function administrateurs()

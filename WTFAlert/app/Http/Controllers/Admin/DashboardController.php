@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Mairie;
+use App\Models\Collectivite;
 use App\Models\Foyer;
 use App\Models\Habitant;
 use App\Models\Alerte;
@@ -20,7 +20,7 @@ class DashboardController extends Controller
     public function index()
     {
         $stats = [
-            'mairies' => Mairie::count(),
+            'collectivites' => Collectivite::count(),
             'foyers' => Foyer::count(),
             'habitants' => Habitant::count(),
             'alertes' => Alerte::count(),

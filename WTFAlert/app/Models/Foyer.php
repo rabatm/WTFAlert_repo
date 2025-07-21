@@ -11,7 +11,7 @@ class Foyer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'mairie_id',
+        'collectivite_id',
         'nom',
         'numero_voie',
         'adresse',
@@ -36,9 +36,9 @@ class Foyer extends Model
         'vulnerable' => 'boolean',
     ];
 
-    public function mairie()
+    public function collectivite()
     {
-        return $this->belongsTo(Mairie::class);
+        return $this->belongsTo(Collectivite::class);
     }
 
     public function habitants()

@@ -24,7 +24,7 @@ class CheckAdminRole
         }
 
         // Vérifier si l'utilisateur a le rôle admin ou super_admin
-        if (!Auth::user()->hasAnyRole(['super_admin', 'admin_mairie'])) {
+        if (!Auth::user()->hasAnyRole(['super_admin', 'admin_collectivite'])) {
             // Rediriger vers la page d'accueil avec un message d'erreur
             return redirect('/')->with('error', 'Accès non autorisé.');
         }

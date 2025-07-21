@@ -18,37 +18,37 @@ class RolePermissionSeeder extends Seeder
         $permissions = [
             // Tableau de bord
             'view_dashboard',
-            
-            // Gestion des mairies
-            'view_mairies',
-            'create_mairies',
-            'edit_mairies',
-            'delete_mairies',
-            
+
+            // Gestion des Collectivités
+            'view_collectivites',
+            'create_collectivites',
+            'edit_collectivites',
+            'delete_collectivites',
+
             // Gestion des utilisateurs
             'view_users',
             'create_users',
             'edit_users',
             'delete_users',
-            
+
             // Gestion des foyers
             'view_foyers',
             'create_foyers',
             'edit_foyers',
             'delete_foyers',
-            
+
             // Gestion des habitants
             'view_habitants',
             'create_habitants',
             'edit_habitants',
             'delete_habitants',
-            
+
             // Gestion des alertes
             'view_alertes',
             'create_alertes',
             'edit_alertes',
             'delete_alertes',
-            
+
             // Gestion des demandes de modification
             'view_demandes_modification',
             'process_demandes_modification',
@@ -62,10 +62,10 @@ class RolePermissionSeeder extends Seeder
         $superAdminRole = Role::create(['name' => 'super_admin']);
         $superAdminRole->givePermissionTo(Permission::all());
 
-        $adminMairieRole = Role::create(['name' => 'admin_mairie']);
+        $adminMairieRole = Role::create(['name' => 'admin_collectivite']);
         $adminMairieRole->givePermissionTo([
             'view_dashboard',
-            'view_mairies',
+            'view_collectivites',
             'view_users',
             'view_foyers',
             'view_habitants',

@@ -18,13 +18,18 @@ fi
 echo "Création d'un nouveau projet Laravel..."
 docker run --rm -v $(pwd)/WTFAlert:/app composer create-project --prefer-dist laravel/laravel /app
 
+# Copier le fichier .env.example vers .env et générer la clé d'application
+echo "Configuration du fichier .env..."
+cp WTFAlert/.env.example WTFAlert/.env
+
+# Générer la clé d'application Laravel
+echo "Génération de la clé d'application..."
+docker-compose up -d
+docker-compose exec app php artisan key:generate
+
 # Ajuster les permissions
 echo "Ajustement des permissions..."
 chmod -R 777 WTFAlert/storage WTFAlert/bootstrap/cache
-
-# Démarrer les conteneurs
-echo "Démarrage des conteneurs Docker..."
-docker-compose up -d
 
 # Message de confirmation
 echo "----------------------------------------"

@@ -57,13 +57,27 @@ REM Démarrer les conteneurs
 echo Démarrage des conteneurs Docker...
 docker-compose up -d
 
+REM Attendre que la base de données soit prête
+echo Attente de la base de données...
+timeout /t 10 /nobreak >nul
+
 REM Générer la clé d'application Laravel
 echo Génération de la clé d'application...
 docker-compose exec app php artisan key:generate
 
+REM Exécuter les migrations
+echo Exécution des migrations de base de données...
+docker-compose exec app php artisan migrate --force
+
+REM Exécuter le seeding
+echo Exécution du seeding de la base de données...
+docker-compose exec app php artisan db:seed --force
+
 echo ----------------------------------------
 echo Configuration terminée!
 echo Vous pouvez accéder à votre application Laravel à l'adresse: http://localhost
+echo ----------------------------------------
+echo Base de données migrée et seedée avec succès!
 echo ----------------------------------------
 echo Pour exécuter des commandes Laravel, utilisez: docker-compose exec app php artisan [commande]
 echo Pour arrêter les conteneurs, utilisez: docker-compose down

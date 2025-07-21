@@ -19,6 +19,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Exécuter les seeders nécessaires
+        $this->call([
+            RolePermissionSeeder::class,
+            AdminUserSeeder::class,
+        ]);
+        
+        // Puis exécuter les autres seeders si nécessaire
+        if (app()->environment() !== 'production') {
+            // Seeders de développement ici
+        }
         // Create sectors
         $secteurNames = ['Nord', 'Sud', 'Est', 'Ouest', 'Centre'];
         $secteurSecteur = ['A', 'B', 'C', 'D', 'E'];

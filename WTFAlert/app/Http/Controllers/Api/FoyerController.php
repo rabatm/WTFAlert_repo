@@ -39,9 +39,18 @@ class FoyerController extends Controller
     public function mesFoyers()
     {
         $user = Auth::user();
-        $habitant = $user->habitant;
-        $foyers = $habitant ? $habitant->foyers()->get() : collect();
+        \Log::info('User ID: ' . ($user ? $user->id : 'null'));
 
-    return response()->json($foyers);
+        $habitant = $user->habitant;
+        \Log::info('Habitant ID: ' . ($habitant ? $habitant->id : 'null'));
+
+        $foyers = $habitant ? $habitant->foyers()->get() : collect();
+        \Log::info('Foyers count: ' . $foyers->count());
+
+        return response()->json([
+            'user_id' => $user ? $user->id : null,
+            'habitant_id' => $habitant ? $habitant->id : null,
+            'foyers' => $foyers
+        ]);
     }
 }

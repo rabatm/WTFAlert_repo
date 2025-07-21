@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
-        'passwords' => 'habitants',
+        'guard' => 'web',
+        'passwords' => 'users',
     ],
 
     /*
@@ -38,11 +38,11 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'habitants',
+            'provider' => 'users',
         ],
         'api' => [
             'driver' => 'sanctum',
-            'provider' => 'habitants',
+            'provider' => 'users',
         ],
     ],
 
@@ -64,6 +64,10 @@ return [
     */
 
     'providers' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
         'habitants' => [
             'driver' => 'eloquent',
             'model' => App\Models\Habitant::class,

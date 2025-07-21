@@ -1,0 +1,82 @@
+/* Consolidated styles from provided CSS files */
+
+/* Inter Font */
+@font-face {
+	font-family: "Inter var";
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+	src: url(../fonts/inter/Inter-upright-var.woff2) format("woff2");
+}
+
+@font-face {
+	font-family: "Inter var";
+	font-weight: 100 900;
+	font-style: italic;
+	font-display: swap;
+	src: url(../fonts/inter/Inter-italic-var.woff2) format("woff2");
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000;
+    font: 13pt Georgia, "Times New Roman", Times, serif;
+    line-height: 1.3;
+  }
+  h1 {
+    font-size: 20pt;
+  }
+  a {
+    page-break-inside: avoid;
+  }
+}
+
+/* Theme Styles */
+:root {
+  --textecouleur: #fbb040;
+}
+
+body {
+  background: #21c2d4 !important;
+}
+
+.wrap_all {
+  max-width: 1000px;
+  width: 100%;
+  margin: 50px auto;
+  padding: 30px 100px 10px;
+  background: white;
+  border: solid #21c2d4 5px;
+  border-radius: 50px 0;
+}
+
+.bloc_blanc_arrondi {
+  background: white;
+  padding: 20px;
+  border-radius: 50px 0;
+}
+
+.container_front_page {
+  margin-top: 30px;
+}
+
+#principal_accueil {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 50px;
+}
+
+#texte_principal_accueil {
+  max-width: 640px;
+  margin-bottom: 20px;
+}
+
+#footer_accueil {
+  padding: 5px 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}

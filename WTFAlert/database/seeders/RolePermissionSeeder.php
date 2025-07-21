@@ -2,85 +2,16 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 
 class RolePermissionSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        // Réinitialiser les rôles et permissions en cache
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-
-        // Créer les permissions
-        $permissions = [
-            // Tableau de bord
-            'view_dashboard',
-
-            // Gestion des Collectivités
-            'view_collectivites',
-            'create_collectivites',
-            'edit_collectivites',
-            'delete_collectivites',
-
-            // Gestion des utilisateurs
-            'view_users',
-            'create_users',
-            'edit_users',
-            'delete_users',
-
-            // Gestion des foyers
-            'view_foyers',
-            'create_foyers',
-            'edit_foyers',
-            'delete_foyers',
-
-            // Gestion des habitants
-            'view_habitants',
-            'create_habitants',
-            'edit_habitants',
-            'delete_habitants',
-
-            // Gestion des alertes
-            'view_alertes',
-            'create_alertes',
-            'edit_alertes',
-            'delete_alertes',
-
-            // Gestion des demandes de modification
-            'view_demandes_modification',
-            'process_demandes_modification',
-        ];
-
-        foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
-        }
-
-        // Créer les rôles et leur attribuer des permissions
-        $superAdminRole = Role::create(['name' => 'super_admin']);
-        $superAdminRole->givePermissionTo(Permission::all());
-
-        $adminMairieRole = Role::create(['name' => 'admin_collectivite']);
-        $adminMairieRole->givePermissionTo([
-            'view_dashboard',
-            'view_collectivites',
-            'view_users',
-            'view_foyers',
-            'view_habitants',
-            'view_alertes',
-            'view_demandes_modification',
-            'process_demandes_modification',
-        ]);
-
-        $gestionnaireRole = Role::create(['name' => 'gestionnaire']);
-        $gestionnaireRole->givePermissionTo([
-            'view_dashboard',
-            'view_foyers',
-            'view_habitants',
-            'view_alertes',
-        ]);
-
-        // Note: La création des utilisateurs administrateurs est gérée par AdminUserSeeder
+        //
     }
 }

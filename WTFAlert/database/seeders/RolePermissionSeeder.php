@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use App\Models\User;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -82,15 +81,6 @@ class RolePermissionSeeder extends Seeder
             'view_alertes',
         ]);
 
-        // Créer un utilisateur super admin par défaut
-        $superAdmin = User::create([
-            'nom' => 'Admin',
-            'prenom' => 'Super',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password'),
-            'is_admin' => true,
-        ]);
-
-        $superAdmin->assignRole('super_admin');
+        // Note: La création des utilisateurs administrateurs est gérée par AdminUserSeeder
     }
 }

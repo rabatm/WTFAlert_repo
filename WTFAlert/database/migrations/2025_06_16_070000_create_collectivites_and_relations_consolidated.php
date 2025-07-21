@@ -26,17 +26,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 2. Ajouter collectivite_id à la table foyers
-        Schema::table('foyers', function (Blueprint $table) {
-            $table->foreignId('collectivite_id')->nullable()->constrained()->onDelete('cascade');
-        });
-
-        // 3. Ajouter collectivite_id à la table secteurs
-        Schema::table('secteurs', function (Blueprint $table) {
-            $table->foreignId('collectivite_id')->nullable()->constrained()->onDelete('cascade');
-        });
-
-        // 4. Créer la table pivot collectivite_user
+        // 2. Créer la table pivot collectivite_user
         Schema::create('collectivite_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('collectivite_id')->constrained()->onDelete('cascade');
@@ -61,18 +51,6 @@ return new class extends Migration
     {
         // Supprimer dans l'ordre inverse de création
         Schema::dropIfExists('collectivite_user');
-
-        // Supprimer les colonnes collectivite_id
-        Schema::table('secteurs', function (Blueprint $table) {
-            $table->dropForeign(['collectivite_id']);
-            $table->dropColumn('collectivite_id');
-        });
-
-        Schema::table('foyers', function (Blueprint $table) {
-            $table->dropForeign(['collectivite_id']);
-            $table->dropColumn('collectivite_id');
-        });
-
         Schema::dropIfExists('collectivites');
     }
 };

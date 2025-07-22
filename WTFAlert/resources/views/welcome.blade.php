@@ -12,24 +12,24 @@
 
     <!-- This site is optimized with the Yoast SEO plugin v23.8 - https://yoast.com/wordpress/plugins/seo/ -->
     <title>Accueil complet - Alerte Administrés</title>
-    <link rel="canonical" href="https://www.martin.surikwat.fr/">
+    <link rel="canonical" href="/">
     <meta property="og:locale" content="fr_CA">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Accueil complet - Alerte Administrés">
     <meta property="og:description" content="Communiquez rapidement et efficacement avec vos concitoyens via des alertes SMS avec Alerte Administrés. Cet outil permet aux dirigeants locaux de diffuser des informations essentielles pour avertir instantanément la population de la commune et les maintenir informés en cas de situations graves imminentes. Que ce soit pour des alertes météorologiques, des inondations, des vagues de […]">
-    <meta property="og:url" content="https://www.martin.surikwat.fr/">
+    <meta property="og:url" content="/">
     <meta property="og:site_name" content="Alerte Administrés">
     <meta property="article:modified_time" content="2023-10-22T20:15:23+00:00">
-    <meta property="og:image" content="https://www.martin.surikwat.fr/wp-content/uploads/2023/10/alerts-sms.png">
+    <meta property="og:image" content="/media/web/alerts-sms.png">
     <meta property="og:image:width" content="295">
     <meta property="og:image:height" content="214">
     <meta property="og:image:type" content="image/png">
     <meta name="twitter:card" content="summary_large_image">
-    <script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://www.martin.surikwat.fr/","url":"https://www.martin.surikwat.fr/","name":"Accueil complet - Alerte Administrés","isPartOf":{"@id":"https://www.martin.surikwat.fr/#website"},"about":{"@id":"https://www.martin.surikwat.fr/#organization"},"primaryImageOfPage":{"@id":"https://www.martin.surikwat.fr/#primaryimage"},"image":{"@id":"https://www.martin.surikwat.fr/#primaryimage"},"thumbnailUrl":"https://www.martin.surikwat.fr/wp-content/uploads/2023/10/alerts-sms.png","datePublished":"2023-10-21T22:39:19+00:00","dateModified":"2023-10-22T20:15:23+00:00","breadcrumb":{"@id":"https://www.martin.surikwat.fr/#breadcrumb"},"inLanguage":"fr-CA","potentialAction":[{"@type":"ReadAction","target":["https://www.martin.surikwat.fr/"]}]},{"@type":"ImageObject","inLanguage":"fr-CA","@id":"https://www.martin.surikwat.fr/#primaryimage","url":"https://www.martin.surikwat.fr/wp-content/uploads/2023/10/alerts-sms.png","contentUrl":"https://www.martin.surikwat.fr/wp-content/uploads/2023/10/alerts-sms.png","width":295,"height":214},{"@type":"BreadcrumbList","@id":"https://www.martin.surikwat.fr/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil"}]},{"@type":"WebSite","@id":"https://www.martin.surikwat.fr/#website","url":"https://www.martin.surikwat.fr/","name":"Alerte Administrés","description":"Vos alertes localisées en temps réel","publisher":{"@id":"https://www.martin.surikwat.fr/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.martin.surikwat.fr/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"fr-CA"},{"@type":"Organization","@id":"https://www.martin.surikwat.fr/#organization","name":"Alerte Administrés","url":"https://www.martin.surikwat.fr/","logo":{"@type":"ImageObject","inLanguage":"fr-CA","@id":"https://www.martin.surikwat.fr/#/schema/logo/image/","url":"https://www.martin.surikwat.fr/wp-content/uploads/2022/06/cropped-logo.jpg","contentUrl":"https://www.martin.surikwat.fr/wp-content/uploads/2022/06/cropped-logo.jpg","width":225,"height":124,"caption":"Alerte Administrés"},"image":{"@id":"https://www.martin.surikwat.fr/#/schema/logo/image/"}}]}</script>
+    <script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"/","url":"/","name":"Accueil complet - Alerte Administrés","isPartOf":{"@id":"/#website"},"about":{"@id":"/#organization"},"primaryImageOfPage":{"@id":"/#primaryimage"},"image":{"@id":"/#primaryimage"},"thumbnailUrl":"/media/web/alerts-sms.png","datePublished":"2023-10-21T22:39:19+00:00","dateModified":"2023-10-22T20:15:23+00:00","breadcrumb":{"@id":"/#breadcrumb"},"inLanguage":"fr-CA","potentialAction":[{"@type":"ReadAction","target":["/"]}]},{"@type":"ImageObject","inLanguage":"fr-CA","@id":"/#primaryimage","url":"/media/web/alerts-sms.png","contentUrl":"/media/web/alerts-sms.png","width":295,"height":214},{"@type":"BreadcrumbList","@id":"/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil"}]},{"@type":"WebSite","@id":"/#website","url":"/","name":"Alerte Administrés","description":"Vos alertes localisées en temps réel","publisher":{"@id":"/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"fr-CA"},{"@type":"Organization","@id":"/#organization","name":"Alerte Administrés","url":"/","logo":{"@type":"ImageObject","inLanguage":"fr-CA","@id":"/#/schema/logo/image/","url":"/media/web/cropped-logo.jpg","contentUrl":"/media/web/cropped-logo.jpg","width":225,"height":124,"caption":"Alerte Administrés"},"image":{"@id":"/#/schema/logo/image/"}}]}</script>
     <!-- / Yoast SEO plugin. -->
 
-    <link rel="alternate" type="application/rss+xml" title="Alerte Administrés » Flux" href="https://www.martin.surikwat.fr/feed/">
-    <link rel="alternate" type="application/rss+xml" title="Alerte Administrés » Flux des commentaires" href="https://www.martin.surikwat.fr/comments/feed/">
+    <link rel="alternate" type="application/rss+xml" title="Alerte Administrés » Flux" href="/feed/">
+    <link rel="alternate" type="application/rss+xml" title="Alerte Administrés » Flux des commentaires" href="/comments/feed/">
     <script>
         window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/15.0.3\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/15.0.3\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/www.martin.surikwat.fr\/wp-includes\/js\/wp-emoji-release.min.js?ver=6.7.2"}};
     </script>
@@ -42,8 +42,8 @@
                 <div class="header-titles-wrapper">
                     <div class="header-titles">
                         <div class="site-logo faux-heading">
-                            <a href="https://www.martin.surikwat.fr/" class="custom-logo-link" rel="home" aria-current="page">
-                                <img width="225" height="124" src="https://www.martin.surikwat.fr/wp-content/uploads/2022/06/cropped-logo.jpg" class="custom-logo" alt="Alerte Administrés" decoding="async">
+                            <a href="/" class="custom-logo-link" rel="home" aria-current="page">
+                                <img width="225" height="124" src="/media/web/cropped-logo.jpg" class="custom-logo" alt="Alerte Administrés" decoding="async">
                             </a>
                             <span class="screen-reader-text">Alerte Administrés</span>
                         </div>
@@ -51,7 +51,7 @@
                     <div class="texte_header">Informez les habitants<br>immédiatement et simplement</div>
                     <div class="pictos_header">
                         <a href="/details">
-                            <img class="size-full wp-image-3477" src="https://martin.surikwat.fr/wp-content/uploads/2023/10/pictos.jpg" alt="" width="134" height="62">
+                            <img class="size-full wp-image-3477" src="/media/web/pictos.jpg" alt="" width="134" height="62">
                         </a>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                     <p>Bénéficiez de fonctionnalités comprises telles que la <strong>diffusion de newsletters</strong> aux personnes intéressées ou encore l’<strong>envoi d’un lien vers l’itinéraire GPS par SMS</strong> d’une propriété aux forces de l’ordre, pompiers, livreurs ou autre.</p>
                 </div>
                 <div id="image_principal_accueil">
-                    <img width="295" height="214" src="https://www.martin.surikwat.fr/wp-content/uploads/2023/10/alerts-sms.png" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" decoding="async" fetchpriority="high">
+                    <img width="295" height="214" src="/media/web/alerts-sms.png" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" decoding="async" fetchpriority="high">
                 </div>
             </div>
             <div class="tribloc">
@@ -77,13 +77,13 @@
                 <div class="untier bloc_blanc_arrondi">
                     <h2>Actualités</h2>
                     <p>
-                        <img decoding="async" class="alignnone size-medium wp-image-3472" src="https://martin.surikwat.fr/wp-content/uploads/2023/10/Mas_du_clos-300x134.webp" alt="" width="300" height="134">
+                        <img decoding="async" class="alignnone size-medium wp-image-3472" src="/media/web/Mas_du_clos-300x134.webp" alt="" width="300" height="134">
                     </p>
                     <p>Nouveauté, envoyez l’itinéraire GPS en un clic sur le téléphone des soldats du feu ou même d’un livreur si besoin</p>
                 </div>
                 <div class="untier bloc_blanc_arrondi">
                     <h2>Mon espace</h2>
-                    <form name="form_custom_alert" id="form_custom_alert" action="https://www.martin.surikwat.fr/wp-login.php" method="post">
+                    <form name="form_custom_alert" id="form_custom_alert" action="/wp-login.php" method="post">
                         <p class="login-username">
                             <label for="user_login">Utilisateur</label>
                             <input type="text" name="log" id="user_login" autocomplete="username" class="input" value="" size="20">
@@ -101,11 +101,11 @@
             </div>
             <div id="footer_accueil" class="bloc_blanc_arrondi">
                 <div id="footer1">
-                    <img src="https://www.martin.surikwat.fr/wp-content/themes/twentytwenty-child/images/alertes-urgence-sms.webp" alt="Prévention sms alertes pompiers incendies">
+                    <img src="/media/web/alertes-urgence-sms.webp" alt="Prévention sms alertes pompiers incendies">
                 </div>
                 <div id="footer2">Mentions légales  - Contact - Conception</div>
                 <div id="footer3">
-                    <img src="https://www.martin.surikwat.fr/wp-content/themes/twentytwenty-child/images/logos-partenaires.jpg" alt="Partenaires">
+                    <img src="/media/web/images/logos-partenaires.jpg" alt="Partenaires">
                 </div>
             </div>
         </div>

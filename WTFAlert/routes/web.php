@@ -52,3 +52,6 @@ Route::post('logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
 });
+
+
+route::get('/accueil', function () {    return view('accueil');});

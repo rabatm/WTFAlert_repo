@@ -38,15 +38,19 @@
 
             <nav class="nav-links">
                 <div class="nav-inner">
-                    <a href="/">Accueil</a>
-                    <a href="/services">Services</a>
-                    <a href="/contact">Contact</a>
+                    <a href="/accueil" class="{{ request()->is('accueil') ? 'current' : '' }}">Accueil</a>
+                    <a href="/services" class="{{ request()->is('services') ? 'current' : '' }}">Services</a>
+                    <a href="/administres" class="{{ request()->is('administres') ? 'current' : '' }}">Administrés</a>
+                    <a href="/infomail" class="{{ request()->is('infomail') ? 'current' : '' }}">Infomail</a>
+                    <a href="/alerte" class="{{ request()->is('alerte') ? 'current' : '' }}">Alerte</a>
+                    <a href="/contact" class="{{ request()->is('contact') ? 'current' : '' }}">Contact</a>
 
                     @auth
-                        <a href="/dashboard">Tableau de bord</a>
+                        <a href="/dashboard" class="{{ request()->is('dashboard') ? 'current' : '' }}">Tableau de bord</a>
                     @endauth
                 </div>
             </nav>
+
 
         </div>
     </header>

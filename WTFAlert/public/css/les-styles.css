@@ -53,13 +53,19 @@ body {
 
 .nav-links a {
     color: var(--accent);
-    font-weight: bold;
+    font-weight: 400;
     text-decoration: none;
     transition: color 0.3s ease;
+    margin-left: 10px;
 }
 
 .nav-links a:hover {
     color: var(--accent-fonce);
+    border-bottom: dotted;
+}
+
+.nav-links a.current {
+    font-weight: bold;
 }
 
 /* === Menu mobile (hamburger) === */

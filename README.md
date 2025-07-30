@@ -11,7 +11,7 @@ Ce projet contient une configuration Docker pour développer une application Lar
 ## Prérequis
 
 - Docker
-- Docker Compose
+- Docker Compose test
 
 ## Installation et démarrage
 
@@ -23,6 +23,7 @@ Ce projet contient une configuration Docker pour développer une application Lar
 ```
 
 Ce script va:
+
 - Créer un nouveau projet Laravel dans le dossier WTFAlert
 - Configurer les permissions nécessaires
 - Démarrer les conteneurs Docker
@@ -54,6 +55,7 @@ Les informations de connexion à la base de données sont définies dans le fich
 ## Personnalisation
 
 Vous pouvez modifier les configurations:
+
 - Nginx: `/docker/nginx/default.conf`
 - PHP: `/docker/php/Dockerfile`
 - Variables d'environnement: `.env`

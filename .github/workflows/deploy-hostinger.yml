@@ -1,0 +1,122 @@
+name: Deploy Laravel App to Hostinger
+
+on:
+  push:
+    branches:
+      - r7Hostinger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code from repository
+        uses: actions/checkout@v4
+
+      - name: 🐘 Setup PHP on GitHub runner
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, bcmath, zip, pdo_mysql
+
+      # 🚀 Copier SEULEMENT le dossier "app" vers public_html sur Hostinger
+      - name: 📤 Deploy Laravel app folder to Hostinger via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USERNAME }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          script: |
+            echo "🏁 Starting deployment of Laravel app to public_html..."
+
+            # Aller dans le répertoire home
+            cd /home/${{ secrets.HOSTINGER_USERNAME }}
+
+            # Cloner ou pull le repository s'il n'existe pas
+            if [ ! -d "repo" ]; then
+              echo "📥 Cloning repository for the first time..."
+              git clone -b r7Hostinger https://github.com/TONUSERNAME/TONREPO.git repo
+            else
+              echo "📥 Pulling latest changes..."
+              cd repo
+              git pull origin r7Hostinger
+              cd ..
+            fi
+
+            # Sauvegarder le .env existant s'il y en a un
+            if [ -f "public_html/.env" ]; then
+              cp public_html/.env public_html/.env.backup.$(date +%Y%m%d_%H%M%S)
+              echo "📋 .env backed up"
+            fi
+
+            # Mode maintenance Laravel (si l'app existe déjà)
+            if [ -f "public_html/artisan" ]; then
+              cd public_html
+              php artisan down --retry=60 --secret="${{ secrets.MAINTENANCE_SECRET }}" || echo "🔧 Maintenance mode activated"
+              cd ..
+            fi
+
+            # Vider public_html (sauf .env et quelques fichiers critiques)
+            echo "🧹 Cleaning public_html..."
+            find public_html -mindepth 1 -name "*.env*" -prune -o -name ".htaccess" -prune -o -type f -delete
+            find public_html -mindepth 1 -name "*.env*" -prune -o -name ".htaccess" -prune -o -type d -exec rm -rf {} + 2>/dev/null || true
+
+            # Copier TOUT le contenu du dossier app vers public_html
+            echo "📁 Copying Laravel app to public_html..."
+            cp -r repo/app/* public_html/
+
+            # Aller dans public_html pour les opérations Laravel
+            cd public_html
+
+            # Restaurer le .env s'il a été sauvegardé
+            if [ -f ".env.backup.$(date +%Y%m%d_%H%M%S)" ]; then
+              mv .env.backup.$(date +%Y%m%d_%H%M%S) .env
+              echo "📋 .env restored"
+            fi
+
+            # Installation des dépendances Composer
+            echo "📦 Installing Composer dependencies..."
+            composer install --no-interaction --optimize-autoloader --no-dev
+
+            # Générer la clé d'application si nécessaire
+            if [ ! -f ".env" ]; then
+              cp .env.example .env
+              php artisan key:generate
+              echo "🔑 Application key generated"
+            fi
+
+            # Migrations de base de données
+            echo "🗄️ Running database migrations..."
+            php artisan migrate --force
+
+            # Clear et recache des configurations
+            echo "🧹 Clearing and rebuilding caches..."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan optimize
+
+            # Permissions des dossiers critiques Laravel
+            echo "🔐 Setting proper permissions..."
+            chmod -R 775 storage bootstrap/cache
+
+            # Si tu as des queues
+            php artisan queue:restart || echo "⚠️ Queue restart skipped"
+
+            # Sortir du mode maintenance
+            php artisan up
+            echo "✅ Laravel app is now live in public_html!"
+
+      - name: 🔔 Notify deployment success
+        if: success()
+        run: |
+          echo "🎉 Laravel app deployed successfully to Hostinger!"
+          echo "👨‍💻 Deployed by: ${{ github.actor }}"
+          echo "📁 Content from 'app' folder is now in public_html"
+
+      - name: 💥 Notify deployment failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "👨‍💻 Attempted by: ${{ github.actor }}"

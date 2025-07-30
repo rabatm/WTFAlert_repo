@@ -17,7 +17,7 @@ postgres_data/
 
 # IDE specific
 .idea/
-.vscode/
+xt.vscode/
 *.sublime-workspace
 *.sublime-project
 .phpstorm.meta.php

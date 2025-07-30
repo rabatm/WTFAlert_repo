@@ -3,7 +3,7 @@ name: Deploy Laravel App to Hostinger
 on:
   push:
     branches:
-      - r7Hostinger
+      - r7hostinger
 
 jobs:
   deploy:

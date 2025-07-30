@@ -31,12 +31,12 @@ jobs:
             echo "🏁 Starting deployment of Laravel app to public_html..."
 
             # Aller dans le répertoire home
-            cd /home/${{ secrets.HOSTINGER_USERNAME }}
+            cd /home/u967840829/domains/alerte.surikwat.fr/public_html
 
             # Cloner ou pull le repository s'il n'existe pas
             if [ ! -d "repo" ]; then
               echo "📥 Cloning repository for the first time..."
-              git clone -b r7Hostinger https://github.com/TONUSERNAME/TONREPO.git repo
+              git clone -b r7Hostinger https://github.com/rabatm/WTFAlert_repo.git repo
             else
               echo "📥 Pulling latest changes..."
               cd repo

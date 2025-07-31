@@ -41,8 +41,7 @@
                     <a href="/accueil" class="{{ request()->is('accueil') ? 'current' : '' }}">Accueil</a>
                     <a href="/services" class="{{ request()->is('services') ? 'current' : '' }}">Services</a>
                     <a href="/administres" class="{{ request()->is('administres') ? 'current' : '' }}">Administrés</a>
-                    <a href="/infomail" class="{{ request()->is('infomail') ? 'current' : '' }}">Infomail</a>
-                    <a href="/alerte" class="{{ request()->is('alerte') ? 'current' : '' }}">Alerte</a>
+                    <a href="/gestion" class="{{ request()->is('infomail') ? 'current' : '' }}">Infomail</a>
                     <a href="/contact" class="{{ request()->is('contact') ? 'current' : '' }}">Contact</a>
 
                     @auth

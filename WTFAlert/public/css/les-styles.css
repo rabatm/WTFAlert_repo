@@ -1,0 +1,252 @@
+/* === Variables globales === */
+:root {
+    --fond-principal: #21c2d4;
+    --accent: #fbb040;
+    --accent-fonce: #e59a27;
+    --blanc: #ffffff;
+    --texte-principal: #222;
+    --ombre-légère: rgba(0, 0, 0, 0.08);
+}
+
+/* === Reset simple === */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--fond-principal);
+    color: var(--texte-principal);
+    line-height: 1.5;
+    padding-top: 80px;
+}
+
+/* === Header sticky === */
+.site-header {
+    background-color: var(--blanc);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px var(--ombre-légère);
+    padding: 1rem 1.5rem;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.logo img {
+    height: 48px;
+}
+
+/* === Menu desktop === */
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-links a {
+    color: var(--accent);
+    font-weight: 400;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin-left: 10px;
+}
+
+.nav-links a:hover {
+    color: var(--accent-fonce);
+    border-bottom: dotted;
+}
+
+.nav-links a.current {
+    font-weight: bold;
+}
+
+/* === Menu mobile (hamburger) === */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+
+@media (max-width: 768px) {
+.nav-links {
+        background-color: var(--blanc);
+        position: absolute;
+        top: 70px;
+        right: 1rem;
+        left: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px var(--ombre-légère);
+        overflow: hidden;
+    }
+
+    .nav-inner {
+        display: flex;
+        flex-direction: column;
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 1rem; /* horizontal permanent */
+        padding-top: 0;
+        padding-bottom: 0;
+        transition: max-height 0.4s ease-in-out,
+        padding-top 0.4s ease-in-out,
+        padding-bottom 0.4s ease-in-out;
+        transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+        width: 100%;
+    }
+
+    .nav-links.open .nav-inner {
+        max-height: 500px;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .nav-inner a {
+        padding: 0.75rem;
+        border-bottom: 1px solid #eee;
+        text-align: center;
+        width: 100%;           /* 🔹 ligne horizontale sur toute la largeur */
+        display: block;        /* 🔹 transforme le lien en bloc pour bien s’étendre */
+        box-sizing: border-box;
+    }
+
+    .nav-inner a:last-child {
+        border-bottom: none;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+}
+
+/* === Bloc principal contenu + illustration === */
+.hero {
+    background-color: var(--blanc);
+    max-width: 1000px;
+    margin: 2rem auto 1rem auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px var(--ombre-légère);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .hero {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .hero .illustration {
+        max-width: 300px;
+        flex-shrink: 0;
+    }
+}
+
+.hero h1 {
+    color: var(--accent);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    margin-bottom: 1rem;
+}
+
+.hero .illustration img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+/* === Bloc de connexion (séparé mais aligné) === */
+.login-wrapper {
+    background-color: var(--blanc);
+    max-width: 1000px;
+    margin: 0 auto 2rem auto;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--ombre-légère);
+}
+
+/* Formulaire global */
+.form-login {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .form-login {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .login-fields {
+        display: flex;
+        flex: 1;
+        gap: 1rem;
+    }
+
+    .login-fields input {
+        flex: 1;
+    }
+
+    .login-button {
+        flex-shrink: 0;
+    }
+}
+
+.form-login input,
+.form-login button {
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.login-button button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    padding: 0.75rem 1.5rem;
+}
+
+.login-button button:hover {
+    background-color: var(--accent-fonce);
+    transform: scale(1.03);
+}
+
+/* === Messages === */
+.error {
+    color: red;
+    margin-top: 1rem;
+}
+
+/* === Footer === */
+footer {
+    background-color: var(--blanc);
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px var(--ombre-légère);
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+}

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InfoController;
+use App\Http\Controllers\HabitantFoyerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,6 +21,9 @@ Route::get('/', function () {
 
 Route::get('/info', [InfoController::class, 'index'])->name('info.index');
 Route::get('/info/{id}', [InfoController::class, 'show'])->name('info.show');
+
+// Route pour la liste des habitants et leurs foyers
+Route::get('/habitants-foyers', [HabitantFoyerController::class, 'index'])->name('habitants.foyers.index');
 /*
 |--------------------------------------------------------------------------
 | Admin Routes

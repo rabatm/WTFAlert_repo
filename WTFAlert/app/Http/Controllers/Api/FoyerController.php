@@ -38,19 +38,9 @@ class FoyerController extends Controller
     }
     public function mesFoyers()
     {
-        $user = Auth::user();
-        \Log::info('User ID: ' . ($user ? $user->id : 'null'));
+        // Récupérer tous les foyers avec leurs habitants et users associés
+        $foyers = \App\Models\Foyer::with(['habitants.user'])->get();
 
-        $habitant = $user->habitant;
-        \Log::info('Habitant ID: ' . ($habitant ? $habitant->id : 'null'));
-
-        $foyers = $habitant ? $habitant->foyers()->with(['habitants' => function($query) {
-            $query->withPivot('type_habitant', 'created_at', 'updated_at')
-                  ->with('user');
-        }])->get() : collect();
-        \Log::info('Foyers count: ' . $foyers->count());
-
-        // Réorganiser les données
         $foyersData = $foyers->map(function($foyer) {
             return [
                 'foyer' => [
@@ -72,28 +62,24 @@ class FoyerController extends Controller
                     'indication' => $foyer->indication,
                     'periode_naissance' => $foyer->periode_naissance,
                     'collectivite_id' => $foyer->collectivite_id,
-                    'secteur' => $foyer->secteur, // Ajout du secteur
+                    'secteur' => $foyer->secteur,
                     'created_at' => $foyer->created_at,
                     'updated_at' => $foyer->updated_at,
                 ],
                 'habitants' => $foyer->habitants->map(function($habitant) {
                     return [
-                            'id' => $habitant->id,
-                            // Informations de base depuis User
-                            'nom' => $habitant->user ? $habitant->user->nom : null,
-                            'prenom' => $habitant->user ? $habitant->user->prenom : null,
-                            'email' => $habitant->user ? $habitant->user->email : null,
-                            'telephone_mobile' => $habitant->user ? $habitant->user->telephone_mobile : null,
-                            'telephone_mobile' => $habitant->user->telephone_mobile,
-                            'adresse' => $habitant->adresse,
+                        'id' => $habitant->id,
+                        'nom' => $habitant->user ? $habitant->user->nom : null,
+                        'prenom' => $habitant->user ? $habitant->user->prenom : null,
+                        'email' => $habitant->user ? $habitant->user->email : null,
+                        'telephone_mobile' => $habitant->user ? $habitant->user->telephone_mobile : null,
+                        'adresse' => $habitant->adresse,
                     ];
                 })
             ];
         });
 
         return response()->json([
-            'user_id' => $user ? $user->id : null,
-            'habitant_id' => $habitant ? $habitant->id : null,
             'foyers_count' => $foyersData->count(),
             'foyers' => $foyersData
         ]);

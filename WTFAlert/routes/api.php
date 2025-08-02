@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/foyer/{id}/is-responsable', [FoyerController::class, 'isResponsable']);
     Route::get('/foyer/{id}/habitants', [FoyerController::class, 'habitants']);
     Route::get('/foyer/{id}/secteur', [FoyerController::class, 'secteur']);
-    Route::get('/mes-foyers', [FoyerController::class, 'mesFoyers']);
+    Route::get('/mes-foyers', [\App\Http\Controllers\Api\FoyerController::class, 'mesFoyers']);
 
     // Routes pour les demandes de modification
     Route::post('/demandes-modification', [\App\Http\Controllers\Api\DemandeModificationController::class, 'store']);

@@ -58,5 +58,5 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-route::get('/accueil', function () {    return view('accueil');});
-route::get('/administres', function () {    return view('administres');});
+Route::get('/accueil', function () {    return view('accueil');});
+Route::get('/administres', [HabitantFoyerController::class, 'administres'])->name('administres');

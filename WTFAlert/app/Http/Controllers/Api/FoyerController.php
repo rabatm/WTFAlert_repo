@@ -72,6 +72,7 @@ class FoyerController extends Controller
                     'indication' => $foyer->indication,
                     'periode_naissance' => $foyer->periode_naissance,
                     'collectivite_id' => $foyer->collectivite_id,
+                    'secteur' => $foyer->secteur, // Ajout du secteur
                     'created_at' => $foyer->created_at,
                     'updated_at' => $foyer->updated_at,
                 ],

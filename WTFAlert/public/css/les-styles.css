@@ -101,7 +101,7 @@ body {
     background: #12a1c7;
     color: white;
 }
-section#liste-foyers {
+section#liste-foyers #cartes-foyers {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;

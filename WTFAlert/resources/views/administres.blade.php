@@ -8,6 +8,7 @@
             <button class="onglet-btn" data-onglet="filtres" type="button">Filtres avancés</button>
             <button class="onglet-btn" data-onglet="colonnes" type="button">Colonnes à afficher</button>
             <button class="onglet-btn" data-onglet="actions" type="button">Actions</button>
+            <button class="onglet-btn" data-onglet="recherche" type="button">Recherche</button>
         </div>
         <div class="onglets-contenus">
             <div class="onglet-content" id="onglet-secteurs">
@@ -47,11 +48,25 @@
             <div class="onglet-content" id="onglet-actions" style="display:none;">
                 <section id="zone-actions"><strong>Actions</strong></section>
             </div>
+            <div class="onglet-content" id="onglet-recherche" style="display:none;">
+                <input type="text" id="input-recherche" placeholder="Rechercher..." style="width:100%;padding:8px;margin-top:10px;">
+            </div>
         </div>
+    </section>
+
+    <!-- Section statistiques -->
+    <section id="stats-foyers" style="margin: 20px 0;">
+        <span id="stat-total-foyers"></span> |
+        <span id="stat-filtre-foyers"></span> |
+        <span id="stat-selection-foyers"></span>
     </section>
 
     <!-- Liste des foyers -->
     <section id="liste-foyers">
+        <div id="select-all-wrapper">
+            <input type="checkbox" id="select-all-foyers" checked>
+            <label for="select-all-foyers">Tout sélectionner / désélectionner</label>
+        </div>
         <!-- Foyers affichés ici par JS -->
     </section>
 
@@ -63,10 +78,33 @@
 <script>
 let foyersData = @json($foyersData);
 
+function updateStats(filteredFoyers) {
+    // Total
+    let totalHabitants = 0;
+    foyersData.forEach(item => { totalHabitants += (item.habitants ? item.habitants.length : 0); });
+    $('#stat-total-foyers').text('Foyers total : ' + foyersData.length + ' (' + totalHabitants + ' habitants)');
+    // Filtrés
+    let filtredHabitants = 0;
+    filteredFoyers.forEach(item => { filtredHabitants += (item.habitants ? item.habitants.length : 0); });
+    $('#stat-filtre-foyers').text('Foyers affichés : ' + filteredFoyers.length + ' (' + filtredHabitants + ' habitants)');
+    // Sélectionnés
+    let selectedFoyers = $('.select-foyer:checked').map(function(){return $(this).closest('.carte-foyer').data('id');}).get();
+    let selectedCount = selectedFoyers.length;
+    let selectedHabitants = 0;
+    filteredFoyers.forEach(item => {
+        if (selectedFoyers.includes(item.foyer.id)) {
+            selectedHabitants += (item.habitants ? item.habitants.length : 0);
+        }
+    });
+    $('#stat-selection-foyers').text('Foyers sélectionnés : ' + selectedCount + ' (' + selectedHabitants + ' habitants)');
+}
+
 function renderFoyers(foyers) {
     // Récupérer les colonnes à afficher
     const colonnes = $('.col-affiche:checked').map(function(){return this.value;}).get();
     let html = '';
+    html += $('#select-all-wrapper')[0].outerHTML;
+    html += '<div id="cartes-foyers">';
     foyers.forEach(function(item, idx) {
         const f = item.foyer;
         html += `<div class=\"carte-foyer\" data-id=\"${f.id}\">\n` +
@@ -120,7 +158,35 @@ function renderFoyers(foyers) {
         html += `<span class=\"secteur\">Secteurs : ${(f.secteurs && f.secteurs.length) ? f.secteurs.join(', ') : '-'}</span>` +
             `</div>`;
     });
+    html += '</div>';
     $('#liste-foyers').html(html);
+    $('#liste-foyers').find('.select-foyer').prop('checked', true);
+    updateStats(foyers);
+}
+
+function normalizeString(str) {
+    if (!str) return '';
+    // Supprime les accents
+    str = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    // Supprime espaces et met en minuscule
+    return str.replace(/\s+/g, '').toLowerCase();
+}
+
+function foyerMatchesSearch(item, search) {
+    if (!search) return true;
+    const f = item.foyer;
+    let allFields = '';
+    for (const key in f) {
+        if (f[key]) allFields += ' ' + f[key];
+    }
+    if (item.habitants && item.habitants.length) {
+        item.habitants.forEach(h => {
+            for (const key in h) {
+                if (h[key]) allFields += ' ' + h[key];
+            }
+        });
+    }
+    return normalizeString(allFields).includes(normalizeString(search));
 }
 
 function getFilteredFoyers() {
@@ -143,6 +209,11 @@ function getFilteredFoyers() {
     if ($('#filtre-non_connecte').is(':checked')) {
         filtered = filtered.filter(item => item.foyer.non_connecte);
     }
+    // Recherche
+    const search = $('#input-recherche').val();
+    if (search && search.trim() !== '') {
+        filtered = filtered.filter(item => foyerMatchesSearch(item, search));
+    }
     return filtered;
 }
 
@@ -156,11 +227,18 @@ $(function() {
         $(this).addClass('active');
     });
 
-    // Ajout case à cocher tout sélectionner
-    $('#liste-foyers').before('<div><input type="checkbox" id="select-all-foyers"> <label for="select-all-foyers">Tout sélectionner / désélectionner</label></div>');
+    // Liste des foyers
+    $('#select-all-foyers').change(function() {
+        $('.select-foyer').prop('checked', this.checked);
+    });
 
     // Affichage initial
     renderFoyers(foyersData);
+    // Cocher toutes les cases au démarrage
+    $(document).ready(function() {
+        $('#select-all-foyers').prop('checked', true);
+        $('.select-foyer').prop('checked', true);
+    });
 
     // Filtrage par secteurs (cases à cocher) et filtres avancés
     $(document).on('change', '.secteur-filter, #filtre-animaux, #filtre-vulnerable, #filtre-internet, #filtre-non_connecte', function() {
@@ -200,6 +278,16 @@ $(function() {
     // Toggle filtres avancés
     $('#toggle-filtres').on('click', function() {
         $('#filtres-avances').toggle();
+    });
+
+    // Recherche dynamique
+    $(document).on('input', '#input-recherche', function() {
+        renderFoyers(getFilteredFoyers());
+    });
+
+    // Mettre à jour stats à chaque changement de filtre ou sélection
+    $(document).on('change', '.secteur-filter, #filtre-animaux, #filtre-vulnerable, #filtre-internet, #filtre-non_connecte, .col-affiche, .select-foyer', function() {
+        updateStats(getFilteredFoyers());
     });
 });
 </script>

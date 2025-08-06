@@ -1,53 +1,54 @@
 @include('header', ['title' => 'Accueil'])
 
 <main>
-    <!-- Bloc de tri par secteur -->
-    <section class="bloc-tri-secteur">
-        <span>Secteurs :</span>
-        <span id="secteurs-checkboxes">
-            @foreach($secteurs as $secteur)
-                <label style="margin-right:10px;"><input type="checkbox" class="secteur-filter" value="{{ $secteur->nom }}"> {{ $secteur->nom }}</label>
-            @endforeach
-            <label style="margin-left:20px;"><input type="checkbox" id="secteurs-all"> Tout / Aucun</label>
-        </span>
-    </section>
-
-    <!-- Bloc filtres avancés -->
-    <section class="bloc-filtres">
-        <button id="toggle-filtres" type="button">Filtres avancés</button>
-        <div id="filtres-avances" style="display:none;">
-            <label><input type="checkbox" id="filtre-animaux"> Avec animaux</label>
-            <label><input type="checkbox" id="filtre-vulnerable"> Vulnérable</label>
-            <label><input type="checkbox" id="filtre-internet"> Internet</label>
-            <label><input type="checkbox" id="filtre-non_connecte"> Non connecté</label>
+    <!-- Bloc onglets filtres -->
+    <section class="bloc-onglets">
+        <div class="onglets-titres">
+            <button class="onglet-btn" data-onglet="secteurs" type="button">Secteurs</button>
+            <button class="onglet-btn" data-onglet="filtres" type="button">Filtres avancés</button>
+            <button class="onglet-btn" data-onglet="colonnes" type="button">Colonnes à afficher</button>
+            <button class="onglet-btn" data-onglet="actions" type="button">Actions</button>
+        </div>
+        <div class="onglets-contenus">
+            <div class="onglet-content" id="onglet-secteurs">
+                <span>Secteurs :</span>
+                <span id="secteurs-checkboxes">
+                    @foreach($secteurs as $secteur)
+                        <label style="margin-right:10px;"><input type="checkbox" class="secteur-filter" value="{{ $secteur->nom }}"> {{ $secteur->nom }}</label>
+                    @endforeach
+                    <label style="margin-left:20px;"><input type="checkbox" id="secteurs-all"> Tout / Aucun</label>
+                </span>
+            </div>
+            <div class="onglet-content" id="onglet-filtres" style="display:none;">
+                <label><input type="checkbox" id="filtre-animaux"> Avec animaux</label>
+                <label><input type="checkbox" id="filtre-vulnerable"> Vulnérable</label>
+                <label><input type="checkbox" id="filtre-internet"> Internet</label>
+                <label><input type="checkbox" id="filtre-non_connecte"> Non connecté</label>
+            </div>
+            <div class="onglet-content" id="onglet-colonnes" style="display:none;">
+                <div id="colonnes-options">
+                    <label><input type="checkbox" class="col-affiche" value="adresse" checked> Adresse</label>
+                    <label><input type="checkbox" class="col-affiche" value="complement_dadresse" checked> Complément d'adresse</label>
+                    <label><input type="checkbox" class="col-affiche" value="code_postal" checked> Code postal</label>
+                    <label><input type="checkbox" class="col-affiche" value="ville" checked> Ville</label>
+                    <label><input type="checkbox" class="col-affiche" value="telephone_fixe" checked> Téléphone fixe</label>
+                    <label><input type="checkbox" class="col-affiche" value="animaux" checked> Animaux</label>
+                    <label><input type="checkbox" class="col-affiche" value="internet" checked> Internet</label>
+                    <label><input type="checkbox" class="col-affiche" value="vulnerable" checked> Vulnérable</label>
+                    <label><input type="checkbox" class="col-affiche" value="non_connecte" checked> Non connecté</label>
+                    <label><input type="checkbox" class="col-affiche" value="indication" checked> Indication</label>
+                    <label><input type="checkbox" class="col-affiche" value="info" checked> Info</label>
+                    <label><input type="checkbox" class="col-affiche" value="latitude" checked> Latitude</label>
+                    <label><input type="checkbox" class="col-affiche" value="longitude" checked> Longitude</label>
+                    <label><input type="checkbox" class="col-affiche" value="periode_naissance" checked> Période de naissance</label>
+                    <label><input type="checkbox" class="col-affiche" value="collectivite_id" checked> Collectivité ID</label>
+                </div>
+            </div>
+            <div class="onglet-content" id="onglet-actions" style="display:none;">
+                <section id="zone-actions"><strong>Actions</strong></section>
+            </div>
         </div>
     </section>
-
-    <!-- Bloc colonnes à afficher -->
-    <section class="bloc-colonnes">
-        <button id="toggle-colonnes" type="button">Colonnes à afficher</button>
-        <div id="colonnes-options" style="display:none;">
-            <label><input type="checkbox" class="col-affiche" value="adresse" checked> Adresse</label>
-            <label><input type="checkbox" class="col-affiche" value="complement_dadresse" checked> Complément d'adresse</label>
-            <label><input type="checkbox" class="col-affiche" value="code_postal" checked> Code postal</label>
-            <label><input type="checkbox" class="col-affiche" value="ville" checked> Ville</label>
-            <label><input type="checkbox" class="col-affiche" value="telephone_fixe" checked> Téléphone fixe</label>
-            <label><input type="checkbox" class="col-affiche" value="animaux" checked> Animaux</label>
-            <label><input type="checkbox" class="col-affiche" value="internet" checked> Internet</label>
-            <label><input type="checkbox" class="col-affiche" value="vulnerable" checked> Vulnérable</label>
-            <label><input type="checkbox" class="col-affiche" value="non_connecte" checked> Non connecté</label>
-            <label><input type="checkbox" class="col-affiche" value="indication" checked> Indication</label>
-            <label><input type="checkbox" class="col-affiche" value="info" checked> Info</label>
-            <label><input type="checkbox" class="col-affiche" value="latitude" checked> Latitude</label>
-            <label><input type="checkbox" class="col-affiche" value="longitude" checked> Longitude</label>
-            <label><input type="checkbox" class="col-affiche" value="periode_naissance" checked> Période de naissance</label>
-            <label><input type="checkbox" class="col-affiche" value="collectivite_id" checked> Collectivité ID</label>
-            <!-- Ajoute d'autres champs si besoin -->
-        </div>
-    </section>
-
-    <!-- Zone d'actions (mail/SMS) -->
-    <section id="zone-actions"></section>
 
     <!-- Liste des foyers -->
     <section id="liste-foyers">
@@ -146,6 +147,15 @@ function getFilteredFoyers() {
 }
 
 $(function() {
+    // Onglets filtres
+    $('.onglet-btn').on('click', function() {
+        var onglet = $(this).data('onglet');
+        $('.onglet-content').hide();
+        $('#onglet-' + onglet).show();
+        $('.onglet-btn').removeClass('active');
+        $(this).addClass('active');
+    });
+
     // Ajout case à cocher tout sélectionner
     $('#liste-foyers').before('<div><input type="checkbox" id="select-all-foyers"> <label for="select-all-foyers">Tout sélectionner / désélectionner</label></div>');
 

@@ -29,24 +29,36 @@
             <div class="onglet-content" id="onglet-colonnes" style="display:none;">
                 <div id="colonnes-options">
                     <label><input type="checkbox" class="col-affiche" value="adresse" checked> Adresse</label>
-                    <label><input type="checkbox" class="col-affiche" value="complement_dadresse" checked> Complément d'adresse</label>
-                    <label><input type="checkbox" class="col-affiche" value="code_postal" checked> Code postal</label>
-                    <label><input type="checkbox" class="col-affiche" value="ville" checked> Ville</label>
-                    <label><input type="checkbox" class="col-affiche" value="telephone_fixe" checked> Téléphone fixe</label>
-                    <label><input type="checkbox" class="col-affiche" value="animaux" checked> Animaux</label>
-                    <label><input type="checkbox" class="col-affiche" value="internet" checked> Internet</label>
-                    <label><input type="checkbox" class="col-affiche" value="vulnerable" checked> Vulnérable</label>
-                    <label><input type="checkbox" class="col-affiche" value="non_connecte" checked> Non connecté</label>
-                    <label><input type="checkbox" class="col-affiche" value="indication" checked> Indication</label>
-                    <label><input type="checkbox" class="col-affiche" value="info" checked> Info</label>
-                    <label><input type="checkbox" class="col-affiche" value="latitude" checked> Latitude</label>
-                    <label><input type="checkbox" class="col-affiche" value="longitude" checked> Longitude</label>
-                    <label><input type="checkbox" class="col-affiche" value="periode_naissance" checked> Période de naissance</label>
-                    <label><input type="checkbox" class="col-affiche" value="collectivite_id" checked> Collectivité ID</label>
+                    <label><input type="checkbox" class="col-affiche" value="secteurs" checked> Secteurs</label>
+                    <label><input type="checkbox" class="col-affiche" value="complement_dadresse"> Complément d'adresse</label>
+                    <label><input type="checkbox" class="col-affiche" value="code_postal"> Code postal</label>
+                    <label><input type="checkbox" class="col-affiche" value="ville"> Ville</label>
+                    <label><input type="checkbox" class="col-affiche" value="telephone_fixe"> Téléphone fixe</label>
+                    <label><input type="checkbox" class="col-affiche" value="animaux"> Animaux</label>
+                    <label><input type="checkbox" class="col-affiche" value="internet"> Internet</label>
+                    <label><input type="checkbox" class="col-affiche" value="vulnerable"> Vulnérable</label>
+                    <label><input type="checkbox" class="col-affiche" value="non_connecte"> Non connecté</label>
+                    <label><input type="checkbox" class="col-affiche" value="indication"> Indication</label>
+                    <label><input type="checkbox" class="col-affiche" value="info"> Info</label>
+                    <label><input type="checkbox" class="col-affiche" value="latitude"> Latitude</label>
+                    <label><input type="checkbox" class="col-affiche" value="longitude"> Longitude</label>
+                    <label><input type="checkbox" class="col-affiche" value="periode_naissance"> Période de naissance</label>
+                    <label><input type="checkbox" class="col-affiche" value="collectivite_id"> Collectivité ID</label>
+                    <span style="margin-left:20px;">
+                        <button type="button" id="colonnes-tous">Tous</button>
+                        <button type="button" id="colonnes-aucun">Aucun</button>
+                        <button type="button" id="colonnes-defaut" style="font-weight:bold;">Défaut</button>
+                    </span>
                 </div>
             </div>
             <div class="onglet-content" id="onglet-actions" style="display:none;">
-                <section id="zone-actions"><strong>Actions</strong></section>
+                <section id="zone-actions">
+                    <strong>Actions</strong><br><br>
+                    <label><input type="checkbox" id="imprimable-action"> Imprimable</label>
+                    <button id="btn-imprimer" type="button" style="margin-left:15px;">Imprimer</button>
+                    <button id="btn-sms" type="button" style="margin-left:15px;">Envoyer SMS</button>
+                    <button id="btn-email" type="button" style="margin-left:10px;">Envoyer email</button>
+                </section>
             </div>
             <div class="onglet-content" id="onglet-recherche" style="display:none;">
                 <input type="text" id="input-recherche" placeholder="Rechercher..." style="width:100%;padding:8px;margin-top:10px;">
@@ -55,7 +67,7 @@
     </section>
 
     <!-- Section statistiques -->
-    <section id="stats-foyers" style="margin: 20px 0;">
+    <section id="stats-foyers">
         <span id="stat-total-foyers"></span> |
         <span id="stat-filtre-foyers"></span> |
         <span id="stat-selection-foyers"></span>
@@ -240,6 +252,17 @@ $(function() {
         $('.select-foyer').prop('checked', true);
     });
 
+    // Classe par défaut sur #liste-foyers
+    $('#liste-foyers').addClass('foyers-display');
+    // Case à cocher imprimable
+    $(document).on('change', '#imprimable-action', function() {
+        if (this.checked) {
+            $('#liste-foyers').removeClass('foyers-display').addClass('foyers-print');
+        } else {
+            $('#liste-foyers').removeClass('foyers-print').addClass('foyers-display');
+        }
+    });
+
     // Filtrage par secteurs (cases à cocher) et filtres avancés
     $(document).on('change', '.secteur-filter, #filtre-animaux, #filtre-vulnerable, #filtre-internet, #filtre-non_connecte', function() {
         renderFoyers(getFilteredFoyers());
@@ -288,6 +311,28 @@ $(function() {
     // Mettre à jour stats à chaque changement de filtre ou sélection
     $(document).on('change', '.secteur-filter, #filtre-animaux, #filtre-vulnerable, #filtre-internet, #filtre-non_connecte, .col-affiche, .select-foyer', function() {
         updateStats(getFilteredFoyers());
+    });
+
+    // Bouton imprimer cartes-foyers
+    $(document).on('click', '#btn-imprimer', function() {
+        var printContent = document.getElementById('cartes-foyers').innerHTML;
+        var win = window.open('', '', 'height=700,width=900');
+        win.document.write('<html><head><title>Impression</title></head><body>' + printContent + '</body></html>');
+        win.document.close();
+        win.print();
+    });
+
+    // Boutons colonnes Tous/Aucun/Défaut
+    $(document).on('click', '#colonnes-tous', function() {
+        $('.col-affiche').prop('checked', true).trigger('change');
+    });
+    $(document).on('click', '#colonnes-aucun', function() {
+        $('.col-affiche').prop('checked', false).trigger('change');
+    });
+    $(document).on('click', '#colonnes-defaut', function() {
+        $('.col-affiche').prop('checked', false);
+        $('.col-affiche[value="adresse"], .col-affiche[value="secteurs"]').prop('checked', true);
+        $('.col-affiche').trigger('change');
     });
 });
 </script>

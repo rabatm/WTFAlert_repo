@@ -44,6 +44,8 @@
                     <label><input type="checkbox" class="col-affiche" value="longitude"> Longitude</label>
                     <label><input type="checkbox" class="col-affiche" value="periode_naissance"> Période de naissance</label>
                     <label><input type="checkbox" class="col-affiche" value="collectivite_id"> Collectivité ID</label>
+                    <!-- Nouvelle colonne Habitants -->
+                    <label><input type="checkbox" class="col-affiche" value="habitants"> Habitants</label>
                     <span style="margin-left:20px;">
                         <button type="button" id="colonnes-tous">Tous</button>
                         <button type="button" id="colonnes-aucun">Aucun</button>
@@ -58,8 +60,8 @@
                     <button id="btn-imprimer" type="button" style="margin-left:15px;">Imprimer</button>
                     <button id="btn-sms" type="button" style="margin-left:15px;">Envoyer SMS</button>
                     <button id="btn-email" type="button" style="margin-left:10px;">Envoyer email</button>
-                    <hr style="margin:15px 0;">
-                    <div id="export-mail-bloc">
+                    <button id="toggle-export-mail" type="button" style="margin-left:10px;">Envoyer/Télécharger la sélection</button>
+                    <div id="export-mail-bloc" style="display:none;margin-top:15px;border-top:1px solid #ccc;padding-top:10px;">
                         <label style="display:block;margin-bottom:5px;">Emails destinataires (séparés par virgule, point-virgule ou espace) :</label>
                         <textarea id="export-emails" rows="2" style="width:100%;"></textarea>
                         <div style="margin-top:8px;">
@@ -174,8 +176,17 @@ function renderFoyers(foyers) {
             html += `Période de naissance : ${f.periode_naissance || '-'}<br>`;
         }
         if (colonnes.includes('collectivite_id')) { html += `Collectivité ID : ${f.collectivite_id || '-'}<br>`; }
-        html += `<span class=\"secteur\">Secteurs : ${(f.secteurs && f.secteurs.length) ? f.secteurs.join(', ') : '-'}<\/span>`+
-            `</div>`;
+        html += `<span class=\"secteur\">Secteurs : ${(f.secteurs && f.secteurs.length) ? f.secteurs.join(', ') : '-'}<\/span>`;
+        // Ajout liste habitants si colonne cochée
+        if (colonnes.includes('habitants')) {
+            const habitants = (item.habitants && item.habitants.length) ? item.habitants.map(h => {
+                const prenom = h.prenom || '';
+                const nom = h.nom || '';
+                return (prenom + ' ' + nom).trim();
+            }).join(', ') : '-';
+            html += `<div class=\"habitants\"><em>Habitants :</em> ${habitants}</div>`;
+        }
+        html += `</div>`;
     });
     html += '</div>';
     $('#liste-foyers').html(html);
@@ -360,6 +371,11 @@ $(function() {
             cb.checked = !cb.checked;
             $(cb).trigger('change');
         }
+    });
+
+    // Bouton toggle export-mail-bloc
+    $(document).on('click', '#toggle-export-mail', function(){
+        $('#export-mail-bloc').toggle();
     });
 
     function getSelectedFoyerIds() {

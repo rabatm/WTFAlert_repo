@@ -75,9 +75,9 @@
 
     <!-- Liste des foyers -->
     <section id="liste-foyers">
-        <div id="select-all-wrapper">
-            <input type="checkbox" id="select-all-foyers" checked>
-            <label for="select-all-foyers">Tout sélectionner / désélectionner</label>
+        <div id="select-all-wrapper" class="no-print">
+            <input type="checkbox" id="select-all-foyers" checked class="no-print">
+            <label for="select-all-foyers" class="no-print">Tout sélectionner / désélectionner</label>
         </div>
         <!-- Foyers affichés ici par JS -->
     </section>
@@ -112,15 +112,14 @@ function updateStats(filteredFoyers) {
 }
 
 function renderFoyers(foyers) {
-    // Récupérer les colonnes à afficher
     const colonnes = $('.col-affiche:checked').map(function(){return this.value;}).get();
     let html = '';
     html += $('#select-all-wrapper')[0].outerHTML;
     html += '<div id="cartes-foyers">';
-    foyers.forEach(function(item, idx) {
+    foyers.forEach(function(item) {
         const f = item.foyer;
-        html += `<div class=\"carte-foyer\" data-id=\"${f.id}\">\n` +
-            `<input type=\"checkbox\" class=\"select-foyer\" data-id=\"${f.id}\" id=\"foyer-check-${f.id}\"> ` +
+        html += `<div class="carte-foyer" data-id="${f.id}" style="cursor:pointer;">`+
+            `<input type=\"checkbox\" class=\"select-foyer no-print\" data-id=\"${f.id}\" id=\"foyer-check-${f.id}\"> `+
             `<label for=\"foyer-check-${f.id}\"><strong>${f.nom}</strong></label><br>`;
         if (colonnes.includes('adresse')) {
             html += `${f.adresse ? f.adresse + ', ' : ''}`;
@@ -164,10 +163,8 @@ function renderFoyers(foyers) {
         if (colonnes.includes('periode_naissance')) {
             html += `Période de naissance : ${f.periode_naissance || '-'}<br>`;
         }
-        if (colonnes.includes('collectivite_id')) {
-            html += `Collectivité ID : ${f.collectivite_id || '-'}<br>`;
-        }
-        html += `<span class=\"secteur\">Secteurs : ${(f.secteurs && f.secteurs.length) ? f.secteurs.join(', ') : '-'}</span>` +
+        if (colonnes.includes('collectivite_id')) { html += `Collectivité ID : ${f.collectivite_id || '-'}<br>`; }
+        html += `<span class=\"secteur\">Secteurs : ${(f.secteurs && f.secteurs.length) ? f.secteurs.join(', ') : '-'}<\/span>`+
             `</div>`;
     });
     html += '</div>';
@@ -254,7 +251,7 @@ $(function() {
 
     // Classe par défaut sur #liste-foyers
     $('#liste-foyers').addClass('foyers-display');
-    // Case à cocher imprimable
+    // Case à cocher imprimable (suppr. print-optimized)
     $(document).on('change', '#imprimable-action', function() {
         if (this.checked) {
             $('#liste-foyers').removeClass('foyers-display').addClass('foyers-print');
@@ -309,17 +306,27 @@ $(function() {
     });
 
     // Mettre à jour stats à chaque changement de filtre ou sélection
-    $(document).on('change', '.secteur-filter, #filtre-animaux, #filtre-vulnerable, #filtre-internet, #filtre-non_connecte, .col-affiche, .select-foyer', function() {
+    $(document).on('change', '.secteur-filter, #filtre-animaux, #filtre-vulnerable, #filtre-internet, #filtre-non_connecte, .select-foyer', function() {
         updateStats(getFilteredFoyers());
     });
 
     // Bouton imprimer cartes-foyers
     $(document).on('click', '#btn-imprimer', function() {
-        var printContent = document.getElementById('cartes-foyers').innerHTML;
-        var win = window.open('', '', 'height=700,width=900');
-        win.document.write('<html><head><title>Impression</title></head><body>' + printContent + '</body></html>');
-        win.document.close();
-        win.print();
+        // Marquer les cartes non cochées comme no-print temporairement
+        $('.carte-foyer').each(function(){
+            if(!$(this).find('.select-foyer').is(':checked')) {
+                $(this).addClass('no-print-temp');
+            }
+        });
+        // Ajouter style print temporaire pour no-print-temp
+        const styleTag = $('<style id="print-temp-style" media="print">.no-print-temp{display:none !important;}</style>');
+        $('head').append(styleTag);
+        window.print();
+        // Nettoyage après un léger délai (certains navigateurs retardent print)
+        setTimeout(function(){
+            $('.no-print-temp').removeClass('no-print-temp');
+            $('#print-temp-style').remove();
+        }, 500);
     });
 
     // Boutons colonnes Tous/Aucun/Défaut
@@ -333,6 +340,16 @@ $(function() {
         $('.col-affiche').prop('checked', false);
         $('.col-affiche[value="adresse"], .col-affiche[value="secteurs"]').prop('checked', true);
         $('.col-affiche').trigger('change');
+    });
+
+    // Rendre la carte cliquable pour toggler la sélection
+    $(document).on('click', '.carte-foyer', function(e){
+        if($(e.target).is('input.select-foyer, label, a, button')) return; // éviter double toggle
+        const cb = $(this).find('.select-foyer').get(0);
+        if(cb){
+            cb.checked = !cb.checked;
+            $(cb).trigger('change');
+        }
     });
 });
 </script>

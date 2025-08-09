@@ -101,15 +101,15 @@ body {
     background: #12a1c7;
     color: white;
 }
-section#liste-foyers #cartes-foyers {
+section#liste-foyers.foyers-display #cartes-foyers {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 }
-section#liste-foyers .carte-foyer {
+section#liste-foyers.foyers-display .carte-foyer {
     width: 220px;
     background: white;
-    padding: 10px;
+    padding: 10px;  
     border-radius: 10px;
     margin-bottom: 20px;
 }
@@ -300,3 +300,18 @@ footer {
     font-size: 0.9rem;
     color: #666;
 }
+
+/* === Impression === */
+@media print {
+    header, footer, .bloc-onglets { display: none; }
+    body { background: #fff; }
+    /* Version affichage (garder le flex en impression si non imprimable optimisé) */
+    #liste-foyers.foyers-display #cartes-foyers { display:flex; flex-wrap:wrap; justify-content:space-between; }
+    #liste-foyers.foyers-display .carte-foyer { width:220px; }
+    /* Version imprimable optimisée */
+    #liste-foyers.foyers-print #cartes-foyers { display:block; }
+    #liste-foyers.foyers-print .carte-foyer { width:auto; border:1px solid #ccc; margin:0 0 10px 0; page-break-inside:avoid; break-inside:avoid; }
+}
+
+/* === Utilitaires === */
+@media print { .no-print { display:none !important; } }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InfoController;
 use App\Http\Controllers\HabitantFoyerController;
+use App\Http\Controllers\FoyersExportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -60,3 +61,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/accueil', function () {    return view('accueil');});
 Route::get('/administres', [HabitantFoyerController::class, 'administres'])->name('administres');
+
+// Routes pour l'export des foyers
+Route::post('/export/foyers/pdf', [FoyersExportController::class, 'pdf'])->name('foyers.export.pdf');
+Route::post('/export/foyers/email', [FoyersExportController::class, 'email'])->name('foyers.export.email');

@@ -24,6 +24,8 @@
         $slug = request()->path();
         $bodyClassAuto = $slug === '/' ? 'page-accueil' : 'page-' . str_replace(['/', '.'], '-', $slug);
     @endphp
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 

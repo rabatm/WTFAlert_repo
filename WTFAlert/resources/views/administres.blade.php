@@ -58,6 +58,16 @@
                     <button id="btn-imprimer" type="button" style="margin-left:15px;">Imprimer</button>
                     <button id="btn-sms" type="button" style="margin-left:15px;">Envoyer SMS</button>
                     <button id="btn-email" type="button" style="margin-left:10px;">Envoyer email</button>
+                    <hr style="margin:15px 0;">
+                    <div id="export-mail-bloc">
+                        <label style="display:block;margin-bottom:5px;">Emails destinataires (séparés par virgule, point-virgule ou espace) :</label>
+                        <textarea id="export-emails" rows="2" style="width:100%;"></textarea>
+                        <div style="margin-top:8px;">
+                            <button id="btn-export-pdf" type="button">Télécharger PDF sélection</button>
+                            <button id="btn-export-mail" type="button" style="margin-left:10px;">Envoyer PDF par email</button>
+                            <span id="export-status" style="margin-left:15px;color:#555;"></span>
+                        </div>
+                    </div>
                 </section>
             </div>
             <div class="onglet-content" id="onglet-recherche" style="display:none;">
@@ -350,6 +360,75 @@ $(function() {
             cb.checked = !cb.checked;
             $(cb).trigger('change');
         }
+    });
+
+    function getSelectedFoyerIds() {
+        return $('.select-foyer:checked').map(function(){return $(this).data('id');}).get();
+    }
+    function getSelectedColumns() {
+        return $('.col-affiche:checked').map(function(){return this.value;}).get();
+    }
+    function postJson(url, data) {
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            body: JSON.stringify(data)
+        });
+    }
+    function extractErrorResponse(r){
+        const ct = r.headers.get('content-type')||'';
+        if(ct.includes('application/json')) return r.json().then(j=>JSON.stringify(j));
+        return r.text();
+    }
+    // Bouton export PDF avec debug erreurs
+    $('#btn-export-pdf').on('click', function(){
+        const ids = getSelectedFoyerIds();
+        if(!ids.length){ alert('Aucun foyer sélectionné'); return; }
+        const cols = getSelectedColumns();
+        postJson('{{ route('foyers.export.pdf') }}', {foyer_ids: ids, columns: cols})
+            .then(async r=>{
+                if(!r.ok){
+                    let body;
+                    try { body = await extractErrorResponse(r); } catch(e){ body = e.message; }
+                    alert('Erreur génération PDF (HTTP '+r.status+')\n'+ (body||'Sans détail'));
+                    console.error('PDF error', r.status, body);
+                    return;
+                }
+                const blob = await r.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = 'liste_foyers.pdf'; a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(e=>{
+                alert('Erreur réseau PDF: '+ e.message);
+                console.error(e);
+            });
+    });
+    $('#btn-export-mail').on('click', function(){
+        const ids = getSelectedFoyerIds();
+        if(!ids.length){ alert('Aucun foyer sélectionné'); return; }
+        const cols = getSelectedColumns();
+        const emails = $('#export-emails').val();
+        $('#export-status').text('Envoi...');
+        postJson('{{ route('foyers.export.email') }}', {foyer_ids: ids, columns: cols, emails: emails})
+            .then(async r=>{
+                if(!r.ok){
+                    let body;
+                    try { body = await extractErrorResponse(r); } catch(e){ body = e.message; }
+                    $('#export-status').text('Erreur ('+r.status+')');
+                    alert('Erreur envoi email (HTTP '+r.status+')\n'+ (body||'Sans détail'));
+                    console.error('Email export error', r.status, body);
+                    return;
+                }
+                const data = await r.json();
+                if(data.ok){ $('#export-status').text('Envoyé à '+data.count+' destinataire(s)'); }
+                else { $('#export-status').text(data.message||'Erreur'); alert('Erreur: '+(data.message||'Inconnue')); }
+            })
+            .catch(e=>{ $('#export-status').text('Erreur réseau'); alert('Erreur réseau: '+e.message); console.error(e); });
     });
 });
 </script>
